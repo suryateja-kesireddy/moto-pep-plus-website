@@ -1,30 +1,27 @@
 const testimonials = [
   {
     id: 1,
-    name: "Rahul Verma",
-    review:
-      "Amazing accessories and professional installation. My car looks premium now.",
+    name: "Kommu Raju",
+    reviewKey: "review1",
   },
 
   {
     id: 2,
-    name: "Arjun Reddy",
-    review:
-      "Best car accessories shop in Yapral. Quality products and excellent service.",
+    name: "Prathap Kumar",
+    reviewKey: "review2",
   },
 
   {
     id: 3,
-    name: "Karthik Sharma",
-    review:
-      "Very satisfied with the detailing and wheel cap installation. Highly recommended.",
+    name: "Trusted Customers",
+    reviewKey: "review3",
   },
+
 
   {
     id: 4,
-    name: "Sai Teja",
-    review:
-      "Affordable pricing with premium quality products. Loved the overall experience.",
+    name: "Moto Pep Customers",
+    reviewKey: "review4",
   },
 ];
 

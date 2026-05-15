@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import logo from "../assets/logos/moto-logo-1.png";
 
 function Loader() {
   return (
@@ -28,8 +29,11 @@ function Loader() {
           }}
           className="mt-6 text-3xl font-bold tracking-widest"
         >
-          <span className="text-white">MOTO</span>{" "}
-          <span className="text-red-500">PEP PLUS</span>
+          <img
+            src={logo}
+            alt="Moto Pep"
+            className="w-52 mx-auto"
+          />
         </motion.h1>
 
       </div>

@@ -31,11 +31,12 @@ function App() {
 
   return (
     <div className="relative bg-black text-white overflow-hidden">
-      {/* Global Glow Effects */}
+      {/* Global Ambient Glow — subtle and cinematic */}
 
-      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-red-600/10 blur-[150px] rounded-full"></div>
+      <div className="fixed top-0 left-0 w-[400px] h-[400px] bg-red-600/[0.04] blur-[180px] rounded-full pointer-events-none"></div>
 
-      <div className="absolute top-[40%] right-0 w-[400px] h-[400px] bg-red-500/10 blur-[140px] rounded-full"></div>
+      <div className="fixed top-[40%] right-0 w-[350px] h-[350px] bg-blue-500/[0.03] blur-[160px] rounded-full pointer-events-none"></div>
+
       <ScrollProgress />
       <Navbar />
 

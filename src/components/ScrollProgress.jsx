@@ -9,7 +9,7 @@ function ScrollProgress() {
         scaleX: scrollYProgress,
         transformOrigin: "0%",
       }}
-      className="fixed top-0 left-0 right-0 h-1 bg-red-500 z-[9999] shadow-[0_0_20px_rgba(255,0,0,0.9)]"
+      className="fixed top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-red-600 via-red-500 to-red-400 z-[9999] shadow-[0_0_12px_rgba(232,18,36,0.6)]"
     />
   );
 }

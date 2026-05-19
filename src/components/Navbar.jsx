@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 
 import {
-    FaWhatsapp,
     FaBars,
     FaTimes,
     FaCarSide,
@@ -54,7 +53,7 @@ function Navbar() {
             i18n.language === "te"
                 ? "మీ కారును అమ్మండి"
                 : i18n.language === "hi"
-                    ? "अपनी car बेचें"
+                    ? "अपनी CAR बेचें"
                     : "Sell Your Car",
 
             "#sell-car",
@@ -185,14 +184,20 @@ function Navbar() {
                     {/* Brand Text */}
                     <div className="leading-none">
 
-                        <h1 className="
-                            text-[15px]
-                            xl:text-[22px]
-                            font-extrabold
-                            uppercase
-                            tracking-[2px]
-                            whitespace-nowrap
-                        ">
+                        <h1
+                            className={`
+                                ${i18n.language === "te"
+                                    ? "text-[13px]"
+                                    : "text-[14px]"
+                                }
+
+                                xl:text-[22px]
+                                font-extrabold
+                                uppercase
+                                tracking-[2px]
+                                whitespace-nowrap
+                            `}
+                        >
 
                             <span className="
                                 bg-gradient-to-r
@@ -224,22 +229,39 @@ function Navbar() {
                 </a>
 
                 {/* Desktop Navigation */}
-<div className="
-    hidden
-    xl:flex
-    items-center
-    gap-1
-    ml-2
-    flex-1
-    justify-end
-">
+                <div
+                    className={`
+                        hidden
+                        xl:flex
+                        items-center
+                        ml-2
+                        flex-1
+                        justify-center
+
+                        ${i18n.language === "te"
+                            ? "gap-10 xl:gap-15"
+                            : i18n.language === "hi"
+                                ? "gap-10 xl:gap-12"
+                                : "gap-10 xl:gap-20"
+                        }
+                    `}
+                >
 
                     {/* Nav Links */}
-                    <ul className="
-                        flex
-                        items-center
-                        gap-0.5
-                    ">
+                    <ul
+  className={`
+    flex
+    items-center
+
+    ${
+      i18n.language === "te"
+        ? "gap-9"
+        : i18n.language === "hi"
+        ? "gap-15"
+        : "gap-5"
+    }
+  `}
+>
 
                         {navItems.map(([title, link, icon]) => (
 
@@ -289,24 +311,24 @@ function Navbar() {
                                 "></div>
 
                                 {/* Link */}
-                                <span className="
-                                    relative
-                                    z-10
-                                    flex
-                                    items-center
-                                    gap-2
-                                    text-[12px]
-                                    2xl:text-[13px]
-                                    uppercase
-                                    tracking-[2px]
-                                    whitespace-nowrap
-                                    font-medium
-                                    text-gray-400
-                                    group-hover:text-white
-                                    group-hover:tracking-[2.5px]
-                                    transition-all
-                                    duration-300
-                                ">
+                                <span className={`
+    relative
+    z-10
+    flex
+    items-center
+    gap-1.5
+    text-[12px]
+    2xl:text-[13px]
+    ${i18n.language === "en" ? "uppercase" : ""}
+    tracking-[1.5px]
+    whitespace-nowrap
+    font-medium
+    text-gray-400
+    group-hover:text-white
+    group-hover:tracking-[2px]
+    transition-all
+    duration-300
+`}>
 
                                     {icon}
 
@@ -346,7 +368,8 @@ function Navbar() {
                                 }}
 
                                 className={`
-                                    w-11 h-11
+                                    w-11
+                                    h-11
                                     rounded-xl
                                     text-[13px]
                                     font-semibold
@@ -354,8 +377,8 @@ function Navbar() {
                                     duration-300
 
                                     ${i18n.language === lang
-                                        ? "bg-red-500/15 text-red-400 border border-red-500/30 shadow-lg shadow-red-900/20"
-                                        : "text-gray-500 hover:text-white border border-transparent hover:border-white/10"
+                                        ? "bg-red-500/5 border border-red-500/10 shadow-[0_0_6px_rgba(255,0,0,0.08)] text-white"
+                                        : "text-gray-400 hover:text-white"
                                     }
                                 `}
                             >
@@ -365,65 +388,6 @@ function Navbar() {
                         ))}
 
                     </div>
-
-                    {/* WhatsApp Button */}
-                    <a
-                        href="https://wa.me/917093098989"
-
-                        target="_blank"
-                        rel="noreferrer"
-
-                        className="
-    group
-    relative
-    overflow-hidden
-    ml-3
-    px-6
-    py-3
-                        "
-                    >
-
-                        {/* Shine */}
-                        <div className="
-                            absolute
-                            top-0
-                            left-[-100%]
-                            w-full
-                            h-full
-                            bg-gradient-to-r
-                            from-transparent
-                            via-white/10
-                            to-transparent
-                            group-hover:left-[100%]
-                            transition-all
-                            duration-1000
-                        "></div>
-
-                        <div className="
-                            relative
-                            z-10
-                            flex
-                            items-center
-                            gap-2
-                        ">
-
-                            <FaWhatsapp
-                                size={16}
-                                className="text-green-300"
-                            />
-
-                            <span className="
-                                font-semibold
-                                uppercase
-                                tracking-[2px]
-                                text-[12px]
-                            ">
-                                {t("chat")}
-                            </span>
-
-                        </div>
-
-                    </a>
 
                 </div>
 
@@ -483,7 +447,7 @@ function Navbar() {
                     <div className="
                         flex
                         flex-col
-                        gap-2
+                        gap-1.5
                     ">
 
                         {navItems.map(([title, link, icon]) => (

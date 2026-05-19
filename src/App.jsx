@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 
 import { AnimatePresence, motion } from "framer-motion";
 
+import {
+  Routes,
+  Route,
+} from "react-router-dom";
+
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import FloatingWhatsApp from "./components/FloatingWhatsApp";
@@ -15,10 +20,12 @@ import Services from "./sections/Services";
 import Gallery from "./sections/Gallery";
 import Contact from "./sections/Contact";
 import Testimonials from "./sections/Testimonials";
+import SellYourCar from "./sections/SellYourCar";
 
 import ScrollProgress from "./components/ScrollProgress";
-import PreOwnedCars from "./sections/PreOwnedCars";
-import SellYourCar from "./sections/SellYourCar";
+
+import PreOwnedCars from "./pages/PreOwnedCars";
+import CarDetails from "./pages/CarDetails";
 
 function App() {
 
@@ -28,13 +35,12 @@ function App() {
 
   const [cartItems, setCartItems] = useState([]);
 
-  /* TOAST */
   const [toast, setToast] = useState({
     show: false,
     message: "",
   });
 
-  /* SHOW TOAST */
+  /* TOAST */
   const showToast = (message) => {
 
     setToast({
@@ -166,35 +172,80 @@ function App() {
     <div className="relative bg-black text-white overflow-hidden">
 
       {/* Ambient Glow */}
-      <div className="fixed top-0 left-0 w-[400px] h-[400px] bg-red-600/[0.04] blur-[180px] rounded-full pointer-events-none"></div>
+      <div className="
+        fixed
+        top-0
+        left-0
+        w-[400px]
+        h-[400px]
+        bg-red-600/[0.04]
+        blur-[180px]
+        rounded-full
+        pointer-events-none
+      "></div>
 
-      <div className="fixed top-[40%] right-0 w-[350px] h-[350px] bg-blue-500/[0.03] blur-[160px] rounded-full pointer-events-none"></div>
+      <div className="
+        fixed
+        top-[40%]
+        right-0
+        w-[350px]
+        h-[350px]
+        bg-blue-500/[0.03]
+        blur-[160px]
+        rounded-full
+        pointer-events-none
+      "></div>
 
       {/* Progress */}
       <ScrollProgress />
 
-      {/* Navbar */}
-      <Navbar />
+      <Routes>
 
-      {/* Sections */}
-      <Hero />
+        {/* HOME PAGE */}
+        <Route
+          path="/"
+          element={
+            <>
 
-      <Products
-        addToCart={addToCart}
-      />
-      <PreOwnedCars />
-      
-      <SellYourCar />
+              <Navbar />
 
-      <Services />
+              <Hero />
 
-      <Gallery />
+              <Products
+                addToCart={addToCart}
+              />
 
-      <Testimonials />
+              <SellYourCar />
 
-      <Contact />
+              <PreOwnedCars />
 
-      <Footer />
+              <Services />
+
+              <Gallery />
+
+              <Testimonials />
+
+              <Contact />
+
+              <Footer />
+
+            </>
+          }
+        />
+
+        {/* CAR DETAILS */}
+        <Route
+          path="/car/:id"
+          element={
+            <>
+              <Navbar />
+              <CarDetails />
+              <Footer />
+            </>
+          }
+        />
+
+      </Routes>
 
       {/* Floating Buttons */}
       <FloatingCart
@@ -215,7 +266,7 @@ function App() {
         removeFromCart={removeFromCart}
       />
 
-      {/* PREMIUM TOAST */}
+      {/* Toast */}
       <AnimatePresence>
 
         {toast.show && (
@@ -241,7 +292,6 @@ function App() {
 
             transition={{
               duration: 0.35,
-              ease: [0.22, 1, 0.36, 1],
             }}
 
             className="
@@ -257,36 +307,22 @@ function App() {
               border-white/[0.08]
               bg-black/70
               backdrop-blur-2xl
-              shadow-2xl
-              shadow-red-900/20
-              overflow-hidden
             "
           >
 
-            {/* Glow */}
-            <div className="absolute inset-0 bg-gradient-to-r from-red-500/[0.08] via-transparent to-red-500/[0.04]"></div>
-
-            {/* Shine */}
-            <div className="absolute top-0 left-[-100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent animate-[shine_2s_linear]"></div>
-
             <div className="
-              relative
-              z-10
               flex
               items-center
               gap-3
             ">
 
-              {/* Dot */}
               <div className="
-                w-3 h-3
+                w-3
+                h-3
                 rounded-full
                 bg-red-500
-                shadow-lg
-                shadow-red-500/40
               "></div>
 
-              {/* Message */}
               <p className="
                 text-sm
                 md:text-base
@@ -307,6 +343,7 @@ function App() {
     </div>
 
   );
+
 }
 
 export default App;

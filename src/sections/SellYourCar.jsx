@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { uploadFileToCloudinary } from "../utils/cloudinary";
+import { saveCar } from "../data/carStorage";
 
 function SellYourCar() {
 
@@ -11,46 +12,104 @@ function SellYourCar() {
   const [year, setYear] = useState("");
   const [km, setKm] = useState("");
   const [price, setPrice] = useState("");
+  const [carNumber, setCarNumber] = useState("");
+
   const [carImages, setCarImages] = useState([]);
+  const [previewImages, setPreviewImages] = useState([]);
 
   const [rcBook, setRcBook] = useState(null);
-
   const [license, setLicense] = useState(null);
 
   const [loading, setLoading] = useState(false);
 
-  /* WhatsApp Message */
-  const whatsappMessage = encodeURIComponent(
+  const [errors, setErrors] = useState({});
 
-    `🚗 Sell My Car Request
+  /* IMAGE PREVIEW */
+  const handleImageUpload = (e) => {
 
-━━━━━━━━━━━━━━━
-CUSTOMER DETAILS
-━━━━━━━━━━━━━━━
+    const files = [...e.target.files];
 
-Name: ${name}
-Phone: ${phone}
+    setCarImages(files);
 
-━━━━━━━━━━━━━━━
-CAR DETAILS
-━━━━━━━━━━━━━━━
+    const previews = files.map((file) =>
+      URL.createObjectURL(file)
+    );
 
-Brand: ${brand}
-Model: ${model}
-Year: ${year}
-KM Driven: ${km}
-Expected Price: ${price}
+    setPreviewImages(previews);
 
-Please contact me regarding selling my vehicle through Moto Pep Plus.`
+  };
 
-  );
+  /* VALIDATION */
+  const validateForm = () => {
+
+    let newErrors = {};
+
+    if (!name.trim().match(/^[A-Za-z ]+$/)) {
+      newErrors.name = "Only letters allowed";
+    }
+
+    if (!phone.match(/^[0-9]{10}$/)) {
+      newErrors.phone =
+        "Enter valid 10 digit phone";
+    }
+
+    if (!brand.trim()) {
+      newErrors.brand = "Brand required";
+    }
+
+    if (!model.trim()) {
+      newErrors.model = "Model required";
+    }
+
+    if (!year.trim()) {
+      newErrors.year = "Year required";
+    }
+
+    if (!km.trim()) {
+      newErrors.km = "KM required";
+    }
+
+    if (!price.trim()) {
+      newErrors.price =
+        "Expected price required";
+    }
+
+    if (!carNumber.trim()) {
+      newErrors.carNumber =
+        "Car number required";
+    }
+
+    if (carImages.length === 0) {
+      newErrors.images =
+        "Upload car images";
+    }
+
+    if (!rcBook) {
+      newErrors.rc = "RC required";
+    }
+
+    if (!license) {
+      newErrors.license =
+        "License required";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+
+  };
+
+  /* SUBMIT */
   const handleSubmit = async () => {
+
+    if (!validateForm()) {
+      return;
+    }
 
     try {
 
       setLoading(true);
 
-      /* Upload Car Images */
       const uploadedImages = await Promise.all(
 
         carImages.map((file) =>
@@ -59,15 +118,12 @@ Please contact me regarding selling my vehicle through Moto Pep Plus.`
 
       );
 
-      /* Upload RC */
       const rcUrl =
         await uploadFileToCloudinary(rcBook);
 
-      /* Upload License */
       const licenseUrl =
         await uploadFileToCloudinary(license);
 
-      /* WhatsApp Message */
       const message = `
 
 🚗 SELL MY CAR REQUEST
@@ -78,13 +134,16 @@ Please contact me regarding selling my vehicle through Moto Pep Plus.`
 ${name}
 
 📞 Phone:
-${phone}
++91 ${phone}
 
 🚘 Brand:
 ${brand}
 
 🚘 Model:
 ${model}
+
+🚘 Car Number:
+${carNumber}
 
 📅 Year:
 ${year}
@@ -116,6 +175,27 @@ ${licenseUrl}
         `https://wa.me/917093098989?text=${encodeURIComponent(message)}`,
         "_blank"
       );
+
+      // Save car data to local storage
+      saveCar({
+
+  id: Date.now(),
+
+  name,
+  phone,
+  brand,
+  model,
+  year,
+  km,
+  price,
+  carNumber,
+
+  images: uploadedImages,
+
+  rcUrl,
+  licenseUrl,
+
+});
 
       setLoading(false);
 
@@ -149,10 +229,10 @@ ${licenseUrl}
 
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/[0.04] blur-[160px] rounded-full"></div>
 
-      {/* Grid Texture */}
+      {/* Grid */}
       <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:30px_30px]"></div>
 
-      <div className="relative z-10 max-w-7xl mx-auto">
+      <div className="relative z-10  max-w-[1400px] mx-auto">
 
         {/* Heading */}
         <motion.div
@@ -160,7 +240,6 @@ ${licenseUrl}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           viewport={{ once: true }}
-
           className="max-w-4xl mb-16"
         >
 
@@ -190,36 +269,25 @@ ${licenseUrl}
             leading-[0.9]
             uppercase
           ">
-
             Sell Your
             <span className="block text-red-500">
               Car
             </span>
-
           </h2>
-
-          <p className="
-            mt-6
-            text-gray-400
-            max-w-2xl
-            text-sm
-            md:text-lg
-            leading-relaxed
-          ">
-            Looking to sell your vehicle? Moto Pep Plus helps connect buyers and sellers with trusted automotive mediation services.
-          </p>
 
         </motion.div>
 
-        {/* Main Layout */}
+        {/* Layout */}
         <div className="
-          flex
-          justify-center
+          grid
+          lg:grid-cols-2
+          gap-10
+          items-start
         ">
 
-          {/* Form */}
+          {/* LEFT */}
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
             viewport={{ once: true }}
@@ -231,423 +299,830 @@ ${licenseUrl}
               border
               border-white/[0.06]
               bg-white/[0.03]
-              backdrop-blur-2xl
-              p-8
-              md:p-10
-              w-full
-              max-w-[760px]
+              backdrop-blur-3xl
+              p-9
+              md:p-8
               shadow-[0_0_80px_rgba(255,0,0,0.08)]
             "
           >
 
-            {/* Glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-red-500/[0.04] to-transparent"></div>
+            <div className="
+              absolute
+              top-0
+              right-0
+              w-[250px]
+              h-[250px]
+              bg-red-500/[0.06]
+              blur-[120px]
+              rounded-full
+            "></div>
 
-            <div className="relative z-10">
-
-              <h3 className="
-                text-2xl
-                md:text-4xl
-                font-black
-                uppercase
-                mb-8
-              ">
-                Vehicle Details
-              </h3>
+            <div className="relative z-10 mb-8">
 
               <div className="
-  grid
-  lg:grid-cols-2
-  gap-8
-">
+                inline-flex
+                items-center
+                gap-2
+                px-4
+                py-2
+                rounded-full
+                border
+                border-red-500/20
+                bg-red-500/10
+                text-[10px]
+                tracking-[2px]
+                uppercase
+                text-red-300
+                mb-5
+              ">
+                Secure Vehicle Submission
+              </div>
 
-                {/* LEFT SIDE */}
-                <div className="space-y-5">
+              <h3 className="
+                text-3xl
+                md:text-5xl
+                font-black
+                uppercase
+                leading-none
+              ">
+                Vehicle
+                <span className="block text-red-500">
+                  Information
+                </span>
+              </h3>
 
-                  <input
-                    type="text"
-                    placeholder="Customer Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="
-      w-full
-      bg-black/40
-      border
-      border-white/[0.06]
-      rounded-2xl
-      px-5
-      py-4
-      outline-none
-      text-sm
-      focus:border-red-500/30
-      transition
-    "
-                  />
+            </div>
+
+            <div className="
+              relative
+              z-10
+              grid
+              md:grid-cols-2
+              gap-5
+            ">
+
+              {/* Name */}
+              <div className="md:col-span-2">
+
+                <input
+                  type="text"
+                  placeholder="Customer Name"
+                  value={name}
+
+                  onChange={(e) =>
+                    setName(
+                      e.target.value.replace(
+                        /[^A-Za-z ]/g,
+                        ""
+                      )
+                    )
+                  }
+
+                  className="
+                    w-full
+                    h-[64px]
+                    rounded-2xl
+                    border
+                    border-white/[0.06]
+                    bg-black/40
+                    px-5
+                    outline-none
+                    text-sm
+                    focus:border-red-500/40
+                    focus:shadow-[0_0_20px_rgba(255,0,0,0.15)]
+                  "
+                />
+
+                {
+                  errors.name && (
+                    <p className="text-red-500 text-xs mt-2">
+                      {errors.name}
+                    </p>
+                  )
+                }
+
+              </div>
+
+              {/* Phone */}
+              <div className="md:col-span-2">
+
+                <div className="
+                  flex
+                  items-center
+                  h-[64px]
+                  rounded-2xl
+                  border
+                  border-white/[0.06]
+                  bg-black/40
+                  overflow-hidden
+                ">
+
+                  <div className="
+                    px-5
+                    text-red-400
+                    font-medium
+                  ">
+                    +91
+                  </div>
 
                   <input
                     type="text"
                     placeholder="Phone Number"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+
+                    onChange={(e) =>
+                      setPhone(
+                        e.target.value
+                          .replace(/\D/g, "")
+                          .slice(0, 10)
+                      )
+                    }
+
                     className="
-      w-full
-      bg-black/40
-      border
-      border-white/[0.06]
-      rounded-2xl
-      px-5
-      py-4
-      outline-none
-      text-sm
-      focus:border-red-500/30
-      transition
-    "
+                      w-full
+                      h-full
+                      bg-transparent
+                      outline-none
+                      text-sm
+                    "
                   />
-
-                  <input
-                    type="text"
-                    placeholder="Car Brand"
-                    value={brand}
-                    onChange={(e) => setBrand(e.target.value)}
-                    className="
-      w-full
-      bg-black/40
-      border
-      border-white/[0.06]
-      rounded-2xl
-      px-5
-      py-4
-      outline-none
-      text-sm
-      focus:border-red-500/30
-      transition
-    "
-                  />
-
-                  <input
-                    type="text"
-                    placeholder="Car Model"
-                    value={model}
-                    onChange={(e) => setModel(e.target.value)}
-                    className="
-      w-full
-      bg-black/40
-      border
-      border-white/[0.06]
-      rounded-2xl
-      px-5
-      py-4
-      outline-none
-      text-sm
-      focus:border-red-500/30
-      transition
-    "
-                  />
-
-                  <div className="grid grid-cols-2 gap-4">
-
-                    <input
-                      type="text"
-                      placeholder="Year"
-                      value={year}
-                      onChange={(e) => setYear(e.target.value)}
-                      className="
-        w-full
-        bg-black/40
-        border
-        border-white/[0.06]
-        rounded-2xl
-        px-5
-        py-4
-        outline-none
-        text-sm
-        focus:border-red-500/30
-        transition
-      "
-                    />
-
-                    <input
-                      type="text"
-                      placeholder="KM Driven"
-                      value={km}
-                      onChange={(e) => setKm(e.target.value)}
-                      className="
-        w-full
-        bg-black/40
-        border
-        border-white/[0.06]
-        rounded-2xl
-        px-5
-        py-4
-        outline-none
-        text-sm
-        focus:border-red-500/30
-        transition
-      "
-                    />
-
-                  </div>
-
-                  <input
-                    type="text"
-                    placeholder="Expected Price"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    className="
-      w-full
-      bg-black/40
-      border
-      border-white/[0.06]
-      rounded-2xl
-      px-5
-      py-4
-      outline-none
-      text-sm
-      focus:border-red-500/30
-      transition
-    "
-                  />
-
-                </div>
-
-                {/* RIGHT SIDE */}
-                <div className="space-y-5">
-
-                  {/* Upload Car Images */}
-                  <div>
-
-                    <label className="
-      block
-      text-sm
-      uppercase
-      tracking-[2px]
-      text-gray-400
-      mb-3
-    ">
-                      Upload Car Images
-                    </label>
-
-                    <label className="
-      relative
-      flex
-      flex-col
-      items-center
-      justify-center
-      w-full
-      h-[210px]
-      rounded-3xl
-      border
-      border-dashed
-      border-white/[0.08]
-      bg-white/[0.02]
-      hover:border-red-500/30
-      hover:bg-red-500/[0.03]
-      transition-all
-      duration-500
-      cursor-pointer
-      overflow-hidden
-      group
-    ">
-
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        className="hidden"
-
-                        onChange={(e) =>
-                          setCarImages([...e.target.files])
-                        }
-                      />
-
-                      <div className="text-center">
-
-                        <div className="text-6xl mb-4">
-                          🚗
-                        </div>
-
-                        <p className="
-          text-white
-          font-semibold
-          text-base
-        ">
-                          Upload Car Photos
-                        </p>
-
-                        <span className="
-          text-gray-500
-          text-xs
-          mt-2
-          block
-        ">
-                          Front • Back • Interior • Side View
-                        </span>
-
-                      </div>
-
-                    </label>
-
-                  </div>
-
-                  {/* RC Upload */}
-                  <label className="
-    relative
-    flex
-    items-center
-    justify-between
-    px-5
-    py-5
-    rounded-2xl
-    border
-    border-white/[0.06]
-    bg-white/[0.02]
-    hover:border-red-500/30
-    transition-all
-    duration-500
-    cursor-pointer
-    group
-  ">
-
-                    <input
-                      type="file"
-                      accept=".pdf,image/*"
-                      className="hidden"
-
-                      onChange={(e) =>
-                        setRcBook(e.target.files[0])
-                      }
-                    />
-
-                    <div>
-
-                      <p className="text-white font-medium">
-                        Registration Certificate
-                      </p>
-
-                      <span className="text-gray-500 text-xs">
-                        Upload RC document/photo
-                      </span>
-
-                    </div>
-
-                    <div className="text-2xl">
-                      📄
-                    </div>
-
-                  </label>
-
-                  {/* DL Upload */}
-                  <label className="
-    relative
-    flex
-    items-center
-    justify-between
-    px-5
-    py-5
-    rounded-2xl
-    border
-    border-white/[0.06]
-    bg-white/[0.02]
-    hover:border-red-500/30
-    transition-all
-    duration-500
-    cursor-pointer
-    group
-  ">
-
-                    <input
-                      type="file"
-                      accept=".pdf,image/*"
-                      className="hidden"
-
-                      onChange={(e) =>
-                        setLicense(e.target.files[0])
-                      }
-                    />
-                    <div>
-
-                      <p className="text-white font-medium">
-                        Driving License
-                      </p>
-
-                      <span className="text-gray-500 text-xs">
-                        Upload valid driving license
-                      </span>
-
-                    </div>
-
-                    <div className="text-2xl">
-                      🪪
-                    </div>
-
-                  </label>
-
-                </div>
-
-                {/* FULL WIDTH BUTTON */}
-                <div className="lg:col-span-2">
-
-                  <button
-                    onClick={handleSubmit}
-
-                    disabled={loading}
-
-                    className="
-    group
-    relative
-    overflow-hidden
-    flex
-    items-center
-    justify-center
-    w-full
-    rounded-2xl
-    bg-gradient-to-r
-    from-red-600
-    to-red-700
-    py-4
-    text-[11px]
-    uppercase
-    tracking-[2px]
-    font-semibold
-    shadow-2xl
-    shadow-red-900/30
-    hover:scale-[1.01]
-    transition-all
-    duration-300
-    disabled:opacity-60
-    disabled:cursor-not-allowed
-  "
-                  >
-
-                    {/* Shine Effect */}
-                    <div className="
-    absolute
-    top-0
-    left-[-100%]
-    w-full
-    h-full
-    bg-gradient-to-r
-    from-transparent
-    via-white/10
-    to-transparent
-    group-hover:left-[100%]
-    transition-all
-    duration-1000
-  "></div>
-
-                    <span className="relative z-10">
-
-                      {loading
-                        ? "Uploading Files..."
-                        : "Submit Vehicle Details"}
-
-                    </span>
-
-                  </button>
 
                 </div>
 
               </div>
+
+              {/* Brand */}
+              <input
+                type="text"
+                placeholder="Car Brand"
+                value={brand}
+                onChange={(e) =>
+                  setBrand(e.target.value)
+                }
+
+                className="
+                  w-full
+                  h-[64px]
+                  rounded-2xl
+                  border
+                  border-white/[0.06]
+                  bg-black/40
+                  px-5
+                  outline-none
+                  text-sm
+                "
+              />
+
+              {/* Model */}
+              <input
+                type="text"
+                placeholder="Car Model"
+                value={model}
+                onChange={(e) =>
+                  setModel(e.target.value)
+                }
+
+                className="
+                  w-full
+                  h-[64px]
+                  rounded-2xl
+                  border
+                  border-white/[0.06]
+                  bg-black/40
+                  px-5
+                  outline-none
+                  text-sm
+                "
+              />
+
+              {/* Year */}
+              <input
+                type="text"
+                placeholder="Year"
+                value={year}
+
+                onChange={(e) =>
+                  setYear(
+                    e.target.value
+                      .replace(/\D/g, "")
+                      .slice(0, 4)
+                  )
+                }
+
+                className="
+                  w-full
+                  h-[64px]
+                  rounded-2xl
+                  border
+                  border-white/[0.06]
+                  bg-black/40
+                  px-5
+                  outline-none
+                  text-sm
+                "
+              />
+
+              {/* KM */}
+              <input
+                type="text"
+                placeholder="KM Driven"
+                value={km}
+
+                onChange={(e) =>
+                  setKm(
+                    e.target.value.replace(
+                      /\D/g,
+                      ""
+                    )
+                  )
+                }
+
+                className="
+                  w-full
+                  h-[64px]
+                  rounded-2xl
+                  border
+                  border-white/[0.06]
+                  bg-black/40
+                  px-5
+                  outline-none
+                  text-sm
+                "
+              />
+
+              {/* Price */}
+              <input
+                type="text"
+                placeholder="Expected Price"
+                value={price}
+
+                onChange={(e) =>
+                  setPrice(
+                    e.target.value.replace(
+                      /[^0-9,]/g,
+                      ""
+                    )
+                  )
+                }
+
+                className="
+                  w-full
+                  h-[64px]
+                  rounded-2xl
+                  border
+                  border-white/[0.06]
+                  bg-black/40
+                  px-5
+                  outline-none
+                  text-sm
+                "
+              />
+
+              {/* Car Number */}
+              <input
+                type="text"
+                placeholder="Car Number"
+                value={carNumber}
+
+                onChange={(e) =>
+                  setCarNumber(
+                    e.target.value.toUpperCase()
+                  )
+                }
+
+                className="
+                  w-full
+                  h-[64px]
+                  uppercase
+                  rounded-2xl
+                  border
+                  border-white/[0.06]
+                  bg-black/40
+                  px-5
+                  outline-none
+                  text-sm
+                "
+              />
+
+            </div>
+
+          </motion.div>
+
+          {/* RIGHT */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            viewport={{ once: true }}
+
+            className="
+              relative
+              overflow-hidden
+              rounded-[36px]
+              border
+              border-white/[0.06]
+              bg-white/[0.03]
+              backdrop-blur-3xl
+              p-9
+              md:p-8
+              shadow-[0_0_80px_rgba(255,0,0,0.08)]
+            "
+          >
+
+            <div className="
+              absolute
+              bottom-0
+              left-0
+              w-[220px]
+              h-[220px]
+              bg-blue-500/[0.05]
+              blur-[120px]
+              rounded-full
+            "></div>
+
+            <div className="relative z-10">
+
+              {/* Header */}
+              <div className="mb-8">
+
+                <div className="
+                  inline-flex
+                  items-center
+                  gap-2
+                  px-4
+                  py-2
+                  rounded-full
+                  border
+                  border-blue-500/20
+                  bg-blue-500/10
+                  text-[10px]
+                  tracking-[2px]
+                  uppercase
+                  text-blue-300
+                  mb-5
+                ">
+                  Upload Documents
+                </div>
+
+                <h3 className="
+                  text-3xl
+                  md:text-5xl
+                  font-black
+                  uppercase
+                  leading-none
+                ">
+                  Vehicle Media
+                </h3>
+
+              </div>
+
+              {/* Upload */}
+              <label className="
+                relative
+                flex
+                flex-col
+                items-center
+                justify-center
+                w-full
+                h-[190px]
+                rounded-[32px]
+                border
+                border-dashed
+                border-white/[0.08]
+                bg-gradient-to-br
+                from-white/[0.03]
+                to-transparent
+                cursor-pointer
+                overflow-hidden
+                group
+              ">
+
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageUpload}
+                />
+
+                <div className="
+                  absolute
+                  inset-0
+                  opacity-0
+                  group-hover:opacity-100
+                  bg-red-500/[0.04]
+                  transition-all
+                  duration-500
+                "></div>
+
+                <div className="relative z-10 text-center">
+
+                  <div className="text-6xl mb-3">
+                    🚘
+                  </div>
+
+                  <p className="
+                    text-xl
+                    font-bold
+                    mb-2
+                  ">
+                    Upload Car Photos
+                  </p>
+
+                  <span className="
+                    text-gray-500
+                    text-sm
+                  ">
+                    Front • Rear • Interior • Dashboard
+                  </span>
+
+                </div>
+
+              </label>
+
+              {/* Image Preview */}
+              {
+                previewImages.length > 0 && (
+
+                  <div className="
+                    grid
+                    grid-cols-3
+                    gap-3
+                    mt-5
+                  ">
+
+                    {
+                      previewImages.map(
+                        (image, index) => (
+
+                          <div
+                            key={index}
+                            className="
+                              relative
+                              rounded-2xl
+                              overflow-hidden
+                              group
+                            "
+                          >
+
+                            <img
+                              src={image}
+                              alt=""
+                              className="
+                                w-full
+                                h-28
+                                object-cover
+                                group-hover:scale-110
+                                transition-all
+                                duration-500
+                              "
+                            />
+
+                            <button
+                              type="button"
+
+                              onClick={() => {
+
+                                const updatedImages =
+                                  [...carImages];
+
+                                updatedImages.splice(index, 1);
+
+                                setCarImages(updatedImages);
+
+                                const updatedPreviews =
+                                  [...previewImages];
+
+                                updatedPreviews.splice(index, 1);
+
+                                setPreviewImages(
+                                  updatedPreviews
+                                );
+
+                              }}
+
+                              className="
+                                absolute
+                                top-2
+                                right-2
+                                w-7
+                                h-7
+                                rounded-full
+                                bg-red-600
+                                text-white
+                                text-xs
+                              "
+                            >
+                              ✕
+                            </button>
+
+                          </div>
+
+                        )
+                      )
+                    }
+
+                  </div>
+
+                )
+              }
+
+              {/* LIVE VEHICLE PREVIEW */}
+              <div className="
+                mt-6
+                rounded-[28px]
+                overflow-hidden
+                border
+                border-white/[0.06]
+                bg-gradient-to-br
+                from-white/[0.04]
+                to-transparent
+              ">
+
+                <div className="
+                  relative
+                  h-[220px]
+                  overflow-hidden
+                ">
+
+                  {
+                    previewImages.length > 0 ? (
+
+                      <img
+                        src={previewImages[0]}
+                        alt=""
+                        className="
+                          w-full
+                          h-full
+                          object-cover
+                        "
+                      />
+
+                    ) : (
+
+                      <div className="
+                        w-full
+                        h-full
+                        flex
+                        items-center
+                        justify-center
+                        bg-black/40
+                        text-7xl
+                      ">
+                        🚘
+                      </div>
+
+                    )
+                  }
+
+                  <div className="
+                    absolute
+                    inset-0
+                    bg-gradient-to-t
+                    from-black
+                    via-black/20
+                    to-transparent
+                  "></div>
+
+                  <div className="
+                    absolute
+                    top-4
+                    right-4
+                    px-4
+                    py-2
+                    rounded-full
+                    bg-red-600
+                    text-xs
+                    font-semibold
+                    tracking-[1px]
+                  ">
+
+                    ₹ {price || "0"}
+
+                  </div>
+
+                </div>
+
+                <div className="p-6">
+
+                  <h3 className="
+                    text-2xl
+                    font-black
+                    uppercase
+                    leading-tight
+                  ">
+
+                    {brand || "Brand"} {" "}
+                    {model || "Model"}
+
+                  </h3>
+
+                  <div className="
+                    flex
+                    flex-wrap
+                    gap-3
+                    mt-5
+                  ">
+
+                    <div className="
+                      px-4
+                      py-2
+                      rounded-full
+                      border
+                      border-white/[0.06]
+                      bg-white/[0.04]
+                      text-xs
+                    ">
+                      📅 {year || "Year"}
+                    </div>
+
+                    <div className="
+                      px-4
+                      py-2
+                      rounded-full
+                      border
+                      border-white/[0.06]
+                      bg-white/[0.04]
+                      text-xs
+                    ">
+                      🛣 {km || "0"} KM
+                    </div>
+
+                    <div className="
+                      px-4
+                      py-2
+                      rounded-full
+                      border
+                      border-white/[0.06]
+                      bg-white/[0.04]
+                      text-xs
+                    ">
+                      🚘 {carNumber || "CAR NUMBER"}
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* RC */}
+              <label className="
+                flex
+                items-center
+                justify-between
+                mt-6
+                px-5
+                py-5
+                rounded-2xl
+                border
+                border-white/[0.06]
+                bg-black/30
+                cursor-pointer
+              ">
+
+                <input
+                  type="file"
+                  accept=".pdf,image/*"
+                  className="hidden"
+
+                  onChange={(e) =>
+                    setRcBook(
+                      e.target.files[0]
+                    )
+                  }
+                />
+
+                <div>
+
+                  <p className="font-semibold">
+                    Registration Certificate
+                  </p>
+
+                  {
+                    rcBook && (
+                      <p className="
+                        text-green-400
+                        text-xs
+                        mt-2
+                      ">
+                        ✓ {rcBook.name}
+                      </p>
+                    )
+                  }
+
+                </div>
+
+                <div className="text-3xl">
+                  📄
+                </div>
+
+              </label>
+
+              {/* DL */}
+              <label className="
+                flex
+                items-center
+                justify-between
+                mt-5
+                px-5
+                py-5
+                rounded-2xl
+                border
+                border-white/[0.06]
+                bg-black/30
+                cursor-pointer
+              ">
+
+                <input
+                  type="file"
+                  accept=".pdf,image/*"
+                  className="hidden"
+
+                  onChange={(e) =>
+                    setLicense(
+                      e.target.files[0]
+                    )
+                  }
+                />
+
+                <div>
+
+                  <p className="font-semibold">
+                    Driving License
+                  </p>
+
+                  {
+                    license && (
+                      <p className="
+                        text-green-400
+                        text-xs
+                        mt-2
+                      ">
+                        ✓ {license.name}
+                      </p>
+                    )
+                  }
+
+                </div>
+
+                <div className="text-3xl">
+                  🪪
+                </div>
+
+              </label>
+
+              {/* Button */}
+              <button
+                onClick={handleSubmit}
+                disabled={loading}
+
+                className="
+                  relative
+                  overflow-hidden
+                  w-full
+                  h-[64px]
+                  rounded-2xl
+                  mt-8
+                  bg-gradient-to-r
+                  from-red-600
+                  to-red-700
+                  font-semibold
+                  uppercase
+                  tracking-[2px]
+                  shadow-[0_20px_60px_rgba(255,0,0,0.3)]
+                  hover:scale-[1.01]
+                  transition-all
+                  duration-300
+                "
+              >
+
+                <div className="
+                  absolute
+                  top-0
+                  left-[-100%]
+                  w-full
+                  h-full
+                  bg-gradient-to-r
+                  from-transparent
+                  via-white/10
+                  to-transparent
+                  hover:left-[100%]
+                  transition-all
+                  duration-1000
+                "></div>
+
+                <span className="relative z-10">
+
+                  {
+                    loading
+                      ? "Uploading Files..."
+                      : "Submit Vehicle Details"
+                  }
+
+                </span>
+
+              </button>
 
             </div>
 

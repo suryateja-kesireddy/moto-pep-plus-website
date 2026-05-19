@@ -1,9 +1,15 @@
 import { motion } from "framer-motion";
+
 import {
     FaWhatsapp,
     FaBars,
     FaTimes,
     FaCarSide,
+    FaHome,
+    FaBoxOpen,
+    FaTools,
+    FaImages,
+    FaPhoneAlt,
 } from "react-icons/fa";
 
 import { useState } from "react";
@@ -20,9 +26,17 @@ function Navbar() {
 
     const navItems = [
 
-        [t("home"), "#home"],
+        [
+            t("home"),
+            "#home",
+            <FaHome className="text-red-500 text-[12px]" />
+        ],
 
-        [t("products"), "#products"],
+        [
+            t("products"),
+            "#products",
+            <FaBoxOpen className="text-red-500 text-[12px]" />
+        ],
 
         [
             i18n.language === "te"
@@ -31,7 +45,9 @@ function Navbar() {
                     ? "पुरानी कारें"
                     : "Pre-Owned Cars",
 
-            "#cars"
+            "#cars",
+
+            <FaCarSide className="text-red-500 text-[12px]" />
         ],
 
         [
@@ -41,14 +57,28 @@ function Navbar() {
                     ? "अपनी car बेचें"
                     : "Sell Your Car",
 
-            "#sell-car"
+            "#sell-car",
+
+            <FaCarSide className="text-red-500 text-[12px]" />
         ],
 
-        [t("services"), "#services"],
+        [
+            t("services"),
+            "#services",
+            <FaTools className="text-red-500 text-[12px]" />
+        ],
 
-        [t("gallery"), "#gallery"],
+        [
+            t("gallery"),
+            "#gallery",
+            <FaImages className="text-red-500 text-[12px]" />
+        ],
 
-        [t("contact"), "#contact"],
+        [
+            t("contact"),
+            "#contact",
+            <FaPhoneAlt className="text-red-500 text-[11px]" />
+        ],
 
     ];
 
@@ -69,7 +99,7 @@ function Navbar() {
                 left-0
                 w-full
                 z-50
-                bg-black/60
+                bg-black/70
                 backdrop-blur-3xl
                 border-b
                 border-white/[0.04]
@@ -85,7 +115,7 @@ function Navbar() {
                 h-[1px]
                 bg-gradient-to-r
                 from-transparent
-                via-red-500/30
+                via-red-500/40
                 to-transparent
             "></div>
 
@@ -93,40 +123,43 @@ function Navbar() {
             <div className="
                 relative
                 z-10
-                max-w-[1500px]
+                max-w-[1600px]
                 mx-auto
-                px-4
-                md:px-6
-                h-[64px]
-                md:h-[74px]
+                px-5
+                xl:px-8
+                h-[82px]
+                md:h-[88px]
                 flex
                 items-center
                 justify-between
             ">
 
-                {/* Logo */}
+                {/* LOGO */}
                 <a
                     href="#home"
                     className="
                         flex
                         items-center
-                        gap-2.5
+                        gap-2
                         group
+                        min-w-[220px]
+                        ml-[-4px]
                     "
                 >
 
-                    <div className="relative">
+                    {/* Logo Image */}
+                    <div className="relative flex-shrink-0">
 
                         {/* Glow */}
                         <div className="
                             absolute
                             inset-0
-                            bg-red-500/25
-                            blur-xl
+                            bg-red-500/35
+                            blur-3xl
                             rounded-full
                             opacity-0
                             group-hover:opacity-100
-                            transition
+                            transition-all
                             duration-700
                         "></div>
 
@@ -141,24 +174,24 @@ function Navbar() {
                                 rounded-full
                                 object-cover
                                 border
-                                border-red-500/20
-                                shadow-lg
+                                border-red-500/40
+                                shadow-xl
                                 shadow-red-900/30
                             "
                         />
 
                     </div>
 
-                    <div>
+                    {/* Brand Text */}
+                    <div className="leading-none">
 
                         <h1 className="
-                            text-sm
-                            sm:text-base
-                            md:text-lg
-                            font-black
+                            text-[15px]
+                            xl:text-[22px]
+                            font-extrabold
                             uppercase
-                            tracking-[1px]
-                            leading-none
+                            tracking-[2px]
+                            whitespace-nowrap
                         ">
 
                             <span className="
@@ -175,12 +208,13 @@ function Navbar() {
                         </h1>
 
                         <p className="
-                            text-[8px]
-                            md:text-[9px]
+                            text-[7px]
+                            md:text-[8px]
                             text-gray-500
                             uppercase
-                            tracking-[2px]
-                            mt-0.5
+                            tracking-[4px]
+                            mt-1
+                            whitespace-nowrap
                         ">
                             {t("brandSub")}
                         </p>
@@ -190,21 +224,24 @@ function Navbar() {
                 </a>
 
                 {/* Desktop Navigation */}
-                <div className="
-                    hidden
-                    xl:flex
-                    items-center
-                    gap-2
-                ">
+<div className="
+    hidden
+    xl:flex
+    items-center
+    gap-1
+    ml-2
+    flex-1
+    justify-end
+">
 
                     {/* Nav Links */}
                     <ul className="
                         flex
                         items-center
-                        gap-1
+                        gap-0.5
                     ">
 
-                        {navItems.map(([title, link]) => (
+                        {navItems.map(([title, link, icon]) => (
 
                             <a
                                 key={title}
@@ -212,10 +249,9 @@ function Navbar() {
 
                                 className="
                                     relative
-                                    px-5
-                                    2xl:px-6
-                                    py-2.5
-                                    rounded-xl
+                                    px-1
+                                    py-1
+                                    rounded-2xl
                                     overflow-hidden
                                     group
                                     transition-all
@@ -223,19 +259,19 @@ function Navbar() {
                                 "
                             >
 
-                                {/* Hover bg */}
+                                {/* Hover Glass */}
                                 <div className="
                                     absolute
                                     inset-0
                                     bg-white/[0.04]
-                                    rounded-xl
+                                    rounded-2xl
                                     opacity-0
                                     group-hover:opacity-100
-                                    transition
+                                    transition-all
                                     duration-500
                                 "></div>
 
-                                {/* Bottom Accent */}
+                                {/* Bottom Glow */}
                                 <div className="
                                     absolute
                                     bottom-0
@@ -246,42 +282,33 @@ function Navbar() {
                                     h-[1px]
                                     bg-gradient-to-r
                                     from-transparent
-                                    via-red-500/60
+                                    via-red-500/80
                                     to-transparent
                                     transition-all
                                     duration-500
                                 "></div>
 
+                                {/* Link */}
                                 <span className="
                                     relative
                                     z-10
                                     flex
                                     items-center
                                     gap-2
-                                    text-[10px]
-                                    2xl:text-[11px]
+                                    text-[12px]
+                                    2xl:text-[13px]
                                     uppercase
-                                    tracking-[1.8px]
-                                    2xl:tracking-[2.5px]
+                                    tracking-[2px]
                                     whitespace-nowrap
                                     font-medium
                                     text-gray-400
                                     group-hover:text-white
-                                    transition
+                                    group-hover:tracking-[2.5px]
+                                    transition-all
                                     duration-300
                                 ">
 
-                                    {(
-                                        title === "Pre-Owned Cars" ||
-                                        title === "వాడిన కార్లు" ||
-                                        title === "पुरानी कारें" ||
-
-                                        title === "Sell Your Car" ||
-                                        title === "మీ కారును అమ్మండి" ||
-                                        title === "अपनी car बेचें"
-                                    ) && (
-                                        <FaCarSide className="text-red-500 text-xs" />
-                                    )}
+                                    {icon}
 
                                     {title}
 
@@ -293,15 +320,15 @@ function Navbar() {
 
                     </ul>
 
-                    {/* Language Switcher */}
+                    {/* Language */}
                     <div className="
                         flex
                         items-center
                         gap-1
-                        ml-4
+                        ml-3
                         border-l
                         border-white/[0.06]
-                        pl-4
+                        pl-5
                     ">
 
                         {[
@@ -319,15 +346,15 @@ function Navbar() {
                                 }}
 
                                 className={`
-                                    w-9 h-9
-                                    rounded-lg
-                                    text-[11px]
+                                    w-11 h-11
+                                    rounded-xl
+                                    text-[13px]
                                     font-semibold
                                     transition-all
                                     duration-300
-                                    
+
                                     ${i18n.language === lang
-                                        ? "bg-red-500/15 text-red-400 border border-red-500/30"
+                                        ? "bg-red-500/15 text-red-400 border border-red-500/30 shadow-lg shadow-red-900/20"
                                         : "text-gray-500 hover:text-white border border-transparent hover:border-white/10"
                                     }
                                 `}
@@ -339,7 +366,7 @@ function Navbar() {
 
                     </div>
 
-                    {/* WhatsApp CTA */}
+                    {/* WhatsApp Button */}
                     <a
                         href="https://wa.me/917093098989"
 
@@ -347,23 +374,16 @@ function Navbar() {
                         rel="noreferrer"
 
                         className="
-                            group
-                            relative
-                            overflow-hidden
-                            ml-4
-                            px-6
-                            py-2.5
-                            rounded-xl
-                            bg-gradient-to-r
-                            from-red-600/90
-                            to-red-700/90
-                            transition-all
-                            duration-500
-                            hover:shadow-lg
-                            hover:shadow-red-500/20
+    group
+    relative
+    overflow-hidden
+    ml-3
+    px-6
+    py-3
                         "
                     >
 
+                        {/* Shine */}
                         <div className="
                             absolute
                             top-0
@@ -388,7 +408,7 @@ function Navbar() {
                         ">
 
                             <FaWhatsapp
-                                size={15}
+                                size={16}
                                 className="text-green-300"
                             />
 
@@ -396,7 +416,7 @@ function Navbar() {
                                 font-semibold
                                 uppercase
                                 tracking-[2px]
-                                text-[11px]
+                                text-[12px]
                             ">
                                 {t("chat")}
                             </span>
@@ -415,9 +435,9 @@ function Navbar() {
                         xl:hidden
                         relative
                         z-20
-                        w-10
-                        h-10
-                        rounded-lg
+                        w-11
+                        h-11
+                        rounded-xl
                         border
                         border-white/[0.08]
                         bg-white/[0.03]
@@ -437,6 +457,81 @@ function Navbar() {
                 </button>
 
             </div>
+
+            {/* Mobile Menu */}
+            {menuOpen && (
+
+                <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+
+                    transition={{
+                        duration: 0.3,
+                    }}
+
+                    className="
+                        xl:hidden
+                        bg-black/95
+                        backdrop-blur-3xl
+                        border-t
+                        border-white/[0.04]
+                        px-4
+                        py-5
+                    "
+                >
+
+                    <div className="
+                        flex
+                        flex-col
+                        gap-2
+                    ">
+
+                        {navItems.map(([title, link, icon]) => (
+
+                            <a
+                                key={title}
+                                href={link}
+
+                                onClick={() => setMenuOpen(false)}
+
+                                className="
+                                    flex
+                                    items-center
+                                    gap-3
+                                    px-4
+                                    py-3.5
+                                    rounded-2xl
+                                    border
+                                    border-white/[0.05]
+                                    bg-white/[0.02]
+                                    text-gray-300
+                                    hover:border-red-500/20
+                                    hover:bg-red-500/[0.05]
+                                    transition-all
+                                    duration-300
+                                "
+                            >
+
+                                {icon}
+
+                                <span className="
+                                    uppercase
+                                    tracking-[2px]
+                                    text-[11px]
+                                    font-medium
+                                ">
+                                    {title}
+                                </span>
+
+                            </a>
+
+                        ))}
+
+                    </div>
+
+                </motion.div>
+
+            )}
 
         </motion.nav>
     );

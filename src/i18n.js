@@ -79,6 +79,7 @@ const resources = {
 
             review3:
                 "Moto Pep Plus is one of the trusted car accessories shops in Yapral with premium quality products.",
+                preOwnedCars: "Pre-Owned Cars",
         },
     },
 
@@ -159,6 +160,7 @@ const resources = {
 
             review3:
                 "మోటో పెప్ ప్లస్ యాప్రాల్‌లో నమ్మకమైన కార్ యాక్సెసరీస్ షాప్స్‌లో ఒకటి.",
+                preOwnedCars: "ప్రీ-ఓన్డ్ కార్లు",
         },
     },
 
@@ -239,6 +241,7 @@ const resources = {
 
             review3:
                 "मोटो पेप प्लस याप्राल में भरोसेमंद कार एक्सेसरीज़ शॉप्स में से एक है।",
+                preOwnedCars: "प्री-ओन कारें",
         },
     },
 };

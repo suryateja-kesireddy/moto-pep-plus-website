@@ -1,9 +1,9 @@
 import products from "../data/products";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { FaArrowRight } from "react-icons/fa";
+import { FaArrowRight, FaShoppingBag } from "react-icons/fa";
 
-function Products() {
+function Products({ addToCart }) {
 
   const { t, i18n } = useTranslation();
 
@@ -17,34 +17,47 @@ function Products() {
 
     <section
       id="products"
-      className="relative overflow-hidden bg-[#040404] py-20 md:py-32 px-4 md:px-8"
+      className="
+        relative
+        overflow-hidden
+        bg-[#030303]
+        py-20 md:py-32
+        px-4 md:px-6
+      "
     >
 
-      {/* Ambient Lighting */}
-      <div className="absolute top-[-10%] right-[-10%] w-[350px] md:w-[700px] h-[350px] md:h-[700px] bg-red-500/[0.08] blur-[180px] rounded-full"></div>
+      {/* Ambient Background */}
+      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-red-500/[0.08] blur-[180px] rounded-full"></div>
 
-      <div className="absolute bottom-[-10%] left-[-10%] w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-blue-500/[0.05] blur-[180px] rounded-full"></div>
+      <div className="absolute bottom-[-10%] left-[-10%] w-[450px] h-[450px] bg-blue-500/[0.05] blur-[180px] rounded-full"></div>
 
       {/* Grid Texture */}
-      <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:32px_32px]"></div>
+      <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:30px_30px]"></div>
 
-      <div className="relative z-10 max-w-7xl mx-auto">
+      <div className="relative z-10 max-w-[1600px] mx-auto">
 
-        {/* Heading */}
-        <div className="mb-14 md:mb-24 max-w-3xl">
+        {/* SECTION HEADING */}
+        <div className="mb-14 md:mb-24 max-w-4xl">
 
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{
-              duration: 0.6,
+              duration: 0.7,
               ease: [0.22, 1, 0.36, 1],
             }}
             viewport={{ once: true }}
           >
 
-            <p className="text-[10px] md:text-[11px] uppercase tracking-[4px] text-red-500/70 font-medium mb-4">
-              ── Moto Pep Showcase
+            <p className="
+              text-[10px]
+              md:text-xs
+              uppercase
+              tracking-[5px]
+              text-red-500/70
+              mb-5
+            ">
+              ── PREMIUM PERFORMANCE COLLECTION
             </p>
 
             <h2
@@ -65,13 +78,20 @@ function Products() {
                 {t("productsHeading1")}
               </span>{" "}
 
-              <span className="bg-gradient-to-r from-red-500 via-red-400 to-red-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-red-500 via-red-400 to-red-700 bg-clip-text text-transparent">
                 {t("productsHeading2")}
               </span>
 
             </h2>
 
-            <p className="mt-5 text-gray-400 text-sm md:text-lg max-w-2xl leading-relaxed">
+            <p className="
+              mt-6
+              text-gray-400
+              text-sm
+              md:text-lg
+              max-w-2xl
+              leading-relaxed
+            ">
               {t("productsSubtitle")}
             </p>
 
@@ -79,55 +99,56 @@ function Products() {
 
         </div>
 
-        {/* FEATURED SHOWCASE */}
+        {/* FEATURED PRODUCT */}
         <motion.div
-          initial={{ opacity: 0, y: 60 }}
+          initial={{ opacity: 0, y: 80 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{
-            duration: 0.7,
+            duration: 0.8,
             ease: [0.22, 1, 0.36, 1],
           }}
           viewport={{ once: true }}
           className="
             relative
             overflow-hidden
-            rounded-[36px]
+            rounded-[40px]
             border
             border-white/[0.06]
-            bg-gradient-to-b from-white/[0.05] to-white/[0.01]
+            bg-white/[0.03]
             backdrop-blur-2xl
-            mb-8
-            shadow-[0_0_80px_rgba(255,0,0,0.06)]
+            mb-8 md:mb-10
           "
         >
 
-          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-red-500/40 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-red-500/[0.04] via-transparent to-blue-500/[0.03]"></div>
 
-          <div className="grid lg:grid-cols-12 min-h-[600px]">
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent"></div>
+
+          <div className="grid xl:grid-cols-12">
 
             {/* IMAGE */}
-            <div className="lg:col-span-8 relative overflow-hidden">
+            <div className="xl:col-span-8 relative overflow-hidden">
 
               <img
                 src={featuredProduct.image}
                 alt={featuredProduct.name}
                 className="
                   w-full
-                  h-[320px]
-                  md:h-full
+                  h-[340px]
+                  md:h-[600px]
                   object-cover
-                  scale-[1.02]
-                  hover:scale-[1.05]
+                  brightness-[0.88]
+                  contrast-[1.08]
+                  saturate-[1.05]
+                  hover:scale-[1.04]
                   transition-transform
                   duration-[2000ms]
                 "
               />
 
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/20 to-black/70"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/20 to-black/80"></div>
 
               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-
-              <div className="absolute inset-0 bg-gradient-to-tr from-red-500/[0.05] via-transparent to-blue-500/[0.05]"></div>
 
               <div className="
                 absolute
@@ -135,10 +156,11 @@ function Products() {
                 md:top-8 md:left-8
                 px-5 py-2
                 rounded-full
-                bg-black/40
                 border border-white/[0.08]
+                bg-black/40
                 backdrop-blur-xl
-                text-[9px] md:text-[10px]
+                text-[9px]
+                md:text-[10px]
                 uppercase
                 tracking-[3px]
                 text-gray-300
@@ -152,47 +174,49 @@ function Products() {
 
             {/* CONTENT */}
             <div className="
-              lg:col-span-4
+              xl:col-span-4
               relative
               flex
               flex-col
               justify-center
-              p-6 md:p-10 lg:p-12
+              p-7 md:p-12
             ">
 
-              <div className="absolute inset-0 bg-gradient-to-br from-red-500/[0.04] to-transparent"></div>
+              <div className="w-14 h-[2px] bg-gradient-to-r from-red-500 to-transparent rounded-full mb-6"></div>
 
-              <div className="relative z-10">
+              <h2 className="
+                text-4xl
+                md:text-6xl
+                font-black
+                leading-[0.9]
+                tracking-[-2px]
+                mb-6
+              ">
+                {featuredProduct.name}
+              </h2>
 
-                <div className="w-16 h-px bg-gradient-to-r from-red-500 to-transparent mb-6"></div>
+              <p className="
+                text-gray-400
+                text-sm
+                md:text-lg
+                leading-relaxed
+                mb-8
+              ">
+                {featuredProduct.description}
+              </p>
 
-                <h2 className="
-                  text-3xl
-                  md:text-5xl
-                  font-black
-                  leading-[0.95]
-                  mb-5
-                ">
-                  {featuredProduct.name}
-                </h2>
+              {/* BUTTONS */}
+              <div className="flex flex-wrap gap-4">
 
-                <p className="
-                  text-gray-400
-                  leading-relaxed
-                  text-sm
-                  md:text-lg
-                  mb-8
-                ">
-                  {featuredProduct.description}
-                </p>
-
-                {/* Featured CTA Only */}
+                {/* Chat */}
                 <a
                   href="https://wa.me/917093098989"
                   target="_blank"
                   rel="noreferrer"
                   className="
                     group
+                    relative
+                    overflow-hidden
                     inline-flex
                     items-center
                     gap-3
@@ -202,23 +226,57 @@ function Products() {
                     to-red-700
                     px-7 py-4
                     text-[11px]
-                    md:text-[12px]
                     uppercase
                     tracking-[2px]
                     font-semibold
+                    shadow-2xl
+                    shadow-red-900/30
                     hover:scale-[1.03]
                     transition-all
                     duration-300
-                    shadow-2xl
-                    shadow-red-900/30
                   "
                 >
 
-                  {t("chat")}
+                  <span className="relative z-10">
+                    {t("chat")}
+                  </span>
 
-                  <FaArrowRight className="text-[10px] group-hover:translate-x-1 transition duration-300" />
+                  <FaArrowRight className="relative z-10 text-[10px]" />
 
                 </a>
+
+                {/* Add To Cart */}
+                <button
+                  onClick={() => addToCart(featuredProduct)}
+                  className="
+                    group
+                    relative
+                    overflow-hidden
+                    inline-flex
+                    items-center
+                    gap-3
+                    rounded-2xl
+                    border
+                    border-white/[0.08]
+                    bg-white/[0.04]
+                    backdrop-blur-xl
+                    px-7 py-4
+                    text-[11px]
+                    uppercase
+                    tracking-[2px]
+                    font-semibold
+                    hover:border-red-500/30
+                    hover:bg-red-500/[0.08]
+                    transition-all
+                    duration-300
+                  "
+                >
+
+                  <FaShoppingBag className="text-red-400" />
+
+                  Add To Cart
+
+                </button>
 
               </div>
 
@@ -228,43 +286,52 @@ function Products() {
 
         </motion.div>
 
-        {/* SECONDARY GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {/* SECONDARY PRODUCTS */}
+        <div className="
+          grid
+          grid-cols-1
+          md:grid-cols-2
+          xl:grid-cols-12
+          gap-6
+        ">
 
           {secondaryProducts.map((product, index) => (
 
             <motion.div
               key={product.id}
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{
                 delay: index * 0.08,
-                duration: 0.5,
+                duration: 0.6,
               }}
               viewport={{ once: true }}
-              className="
+
+              className={`
                 group
                 relative
                 overflow-hidden
-                rounded-[32px]
+                rounded-[34px]
                 border
                 border-white/[0.06]
-                bg-gradient-to-b from-white/[0.05] to-white/[0.01]
-                hover:border-red-500/20
-                hover:shadow-[0_0_60px_rgba(255,0,0,0.08)]
+                bg-white/[0.03]
+                backdrop-blur-2xl
                 transition-all
-                duration-500
-              "
+                duration-700
+                hover:border-red-500/20
+                hover:-translate-y-1
+
+                ${index === 0 ? "xl:col-span-7" : ""}
+                ${index === 1 ? "xl:col-span-5" : ""}
+                ${index === 2 ? "xl:col-span-5" : ""}
+                ${index === 3 ? "xl:col-span-7" : ""}
+                ${index > 3 ? "xl:col-span-6" : ""}
+              `}
             >
 
-              {/* Premium Top Light */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-700 bg-[radial-gradient(circle_at_top,rgba(255,0,0,0.12),transparent_60%)]"></div>
+
               <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-red-500/40 to-transparent"></div>
-
-              {/* Bottom Glow */}
-              <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[220px] h-[120px] bg-red-500/10 blur-[80px] rounded-full"></div>
-
-              {/* Hover Glow */}
-              <div className="absolute inset-0 bg-gradient-to-br from-red-500/[0.04] to-blue-500/[0.03] opacity-0 group-hover:opacity-100 transition duration-700"></div>
 
               {/* IMAGE */}
               <div className="relative overflow-hidden">
@@ -274,25 +341,29 @@ function Products() {
                   alt={product.name}
                   className="
                     w-full
-                    h-[340px]
+                    h-[280px]
+                    md:h-[340px]
+                    xl:h-[420px]
                     object-cover
+                    brightness-[0.88]
+                    contrast-[1.05]
+                    saturate-[1.1]
                     group-hover:scale-[1.08]
+                    group-hover:rotate-[1deg]
                     transition-transform
-                    duration-[1500ms]
+                    duration-[1800ms]
                   "
                 />
 
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent"></div>
 
-                {/* Premium Badge */}
                 <div className="
                   absolute
-                  top-4 left-4
+                  top-5 left-5
                   px-4 py-2
                   rounded-full
-                  bg-black/40
                   border border-white/[0.08]
+                  bg-black/40
                   backdrop-blur-xl
                   text-[8px]
                   uppercase
@@ -307,24 +378,67 @@ function Products() {
               </div>
 
               {/* CONTENT */}
-              <div className="relative z-10 p-7 md:p-8">
+              <div className="
+                relative
+                z-10
+                p-6 md:p-8 xl:p-10
+              ">
 
                 <h2 className="
                   text-2xl
+                  md:text-3xl
                   font-black
                   leading-tight
+                  tracking-[-1px]
                   mb-4
                 ">
                   {product.name}
                 </h2>
 
+                <div className="w-14 h-[2px] bg-gradient-to-r from-red-500 to-transparent rounded-full mb-5"></div>
+
                 <p className="
                   text-gray-400
                   text-sm
+                  md:text-base
                   leading-relaxed
+                  mb-7
                 ">
                   {product.description}
                 </p>
+
+                {/* Add To Cart */}
+                <button
+                  onClick={() => addToCart(product)}
+                  className="
+                    group
+                    relative
+                    overflow-hidden
+                    inline-flex
+                    items-center
+                    gap-3
+                    rounded-2xl
+                    border
+                    border-white/[0.08]
+                    bg-white/[0.04]
+                    backdrop-blur-xl
+                    px-6 py-3
+                    text-[10px]
+                    uppercase
+                    tracking-[2px]
+                    font-semibold
+                    hover:border-red-500/30
+                    hover:bg-red-500/[0.08]
+                    transition-all
+                    duration-300
+                  "
+                >
+
+                  <FaShoppingBag className="text-red-400" />
+
+                  Add To Cart
+
+                </button>
 
               </div>
 
@@ -337,6 +451,7 @@ function Products() {
       </div>
 
     </section>
+
   );
 }
 

@@ -6,17 +6,23 @@ import {
 
 const firebaseConfig = {
 
-  apiKey: "AIzaSyB6QymTqXVfbmZ57BWZXY9BdfdZIYlIokE",
+  apiKey:
+    import.meta.env.VITE_FIREBASE_API_KEY,
 
-  authDomain: "motopep-plus.firebaseapp.com",
+  authDomain:
+    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
 
-  projectId: "motopep-plus",
+  projectId:
+    import.meta.env.VITE_FIREBASE_PROJECT_ID,
 
-  storageBucket: "motopep-plus.firebasestorage.app",
+  storageBucket:
+    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
 
-  messagingSenderId:  "368718825684",
+  messagingSenderId:
+    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
 
-  appId:  "1:368718825684:web:25f2f7688976871068d341"
+  appId:
+    import.meta.env.VITE_FIREBASE_APP_ID,
 
 };
 

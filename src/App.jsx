@@ -8,11 +8,13 @@ import {
 } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
+import AdminHome from "./pages/AdminHome";
 import Footer from "./components/Footer";
 import FloatingWhatsApp from "./components/FloatingWhatsApp";
 import FloatingCart from "./components/FloatingCart";
 import CartSidebar from "./components/CartSidebar";
 import Loader from "./components/Loader";
+import AdminLogin from "./pages/AdminLogin";
 
 import Hero from "./sections/Hero";
 import Products from "./sections/Products";
@@ -26,8 +28,14 @@ import ScrollProgress from "./components/ScrollProgress";
 
 import PreOwnedCars from "./pages/PreOwnedCars";
 import CarDetails from "./pages/CarDetails";
+import AdminDashboard from "./pages/AdminDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { useLocation } from "react-router-dom";
+import ApprovedCars from "./pages/ApprovedCars";
 
 function App() {
+
+  const location = useLocation();
 
   const [loading, setLoading] = useState(true);
 
@@ -88,9 +96,9 @@ function App() {
         return prev.map((item) =>
           item.id === product.id
             ? {
-                ...item,
-                quantity: item.quantity + 1,
-              }
+              ...item,
+              quantity: item.quantity + 1,
+            }
             : item
         );
 
@@ -115,9 +123,9 @@ function App() {
       prev.map((item) =>
         item.id === id
           ? {
-              ...item,
-              quantity: item.quantity + 1,
-            }
+            ...item,
+            quantity: item.quantity + 1,
+          }
           : item
       )
     );
@@ -134,9 +142,9 @@ function App() {
         .map((item) =>
           item.id === id
             ? {
-                ...item,
-                quantity: item.quantity - 1,
-              }
+              ...item,
+              quantity: item.quantity - 1,
+            }
             : item
         )
         .filter((item) => item.quantity > 0)
@@ -199,7 +207,36 @@ function App() {
       {/* Progress */}
       <ScrollProgress />
 
+
       <Routes>
+        <Route
+          path="/admin-login"
+          element={<AdminLogin />}
+        />
+        <Route
+          path="/approved-cars"
+          element={
+            <ProtectedRoute>
+              <ApprovedCars />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminHome />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pending-cars"
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
 
         {/* HOME PAGE */}
         <Route
@@ -248,13 +285,28 @@ function App() {
       </Routes>
 
       {/* Floating Buttons */}
-      <FloatingCart
-        cartOpen={cartOpen}
-        setCartOpen={setCartOpen}
-        cartCount={cartCount}
-      />
+      {
+        !location.pathname.includes("/admin")
+        &&
+        !location.pathname.includes("/admin-login")
+        &&
+        !location.pathname.includes("/approved-cars")
+        &&
+        !location.pathname.includes("/pending-cars")
+        &&
 
-      <FloatingWhatsApp />
+        (
+          <>
+            <FloatingCart
+              cartOpen={cartOpen}
+              setCartOpen={setCartOpen}
+              cartCount={cartCount}
+            />
+
+            <FloatingWhatsApp />
+          </>
+        )
+      }
 
       {/* Cart Sidebar */}
       <CartSidebar

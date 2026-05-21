@@ -1,7 +1,13 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+
+import {
+  useState,
+  useRef
+} from "react";
+
 import { uploadFileToCloudinary } from "../utils/cloudinary";
-import { saveCar } from "../data/carStorage";
+
+import { savePendingCar } from "../data/firebaseCars";
 
 function SellYourCar() {
 
@@ -12,28 +18,67 @@ function SellYourCar() {
   const [year, setYear] = useState("");
   const [km, setKm] = useState("");
   const [price, setPrice] = useState("");
-  const [carNumber, setCarNumber] = useState("");
+  const [carNumber, setCarNumber] =
+    useState("");
 
-  const [carImages, setCarImages] = useState([]);
-  const [previewImages, setPreviewImages] = useState([]);
+  const [carImages, setCarImages] =
+    useState([]);
 
-  const [rcBook, setRcBook] = useState(null);
-  const [license, setLicense] = useState(null);
+  const [previewImages, setPreviewImages] =
+    useState([]);
 
-  const [loading, setLoading] = useState(false);
+  const [rcBook, setRcBook] =
+    useState(null);
 
-  const [errors, setErrors] = useState({});
+  const [license, setLicense] =
+    useState(null);
 
-  /* IMAGE PREVIEW */
+  const [loading, setLoading] =
+    useState(false);
+
+  const [errors, setErrors] =
+    useState({});
+
+  /* REFS */
+  const nameRef = useRef(null);
+
+  const phoneRef = useRef(null);
+
+  const brandRef = useRef(null);
+
+  const modelRef = useRef(null);
+
+  const yearRef = useRef(null);
+
+  const kmRef = useRef(null);
+
+  const priceRef = useRef(null);
+
+  const carNumberRef =
+    useRef(null);
+
+  /* IMAGE UPLOAD */
   const handleImageUpload = (e) => {
 
-    const files = [...e.target.files];
+    const files =
+      [...e.target.files];
+
+    if (files.length > 8) {
+
+      alert(
+        "Maximum 8 images allowed"
+      );
+
+      return;
+
+    }
 
     setCarImages(files);
 
-    const previews = files.map((file) =>
-      URL.createObjectURL(file)
-    );
+    const previews =
+      files.map((file) =>
+        URL.createObjectURL(file)
+      );
 
     setPreviewImages(previews);
 
@@ -44,329 +89,413 @@ function SellYourCar() {
 
     let newErrors = {};
 
-    if (!name.trim().match(/^[A-Za-z ]+$/)) {
-      newErrors.name = "Only letters allowed";
+    carImages.forEach((file) => {
+
+      if (
+        file.size >
+        5 * 1024 * 1024
+      ) {
+
+        newErrors.images =
+          "Each image must be under 5MB";
+
+      }
+
+    });
+
+    if (!name.trim()) {
+
+      newErrors.name =
+        "Customer name required";
+
+    } else if (
+      !name
+        .trim()
+        .match(/^[A-Za-z ]+$/)
+    ) {
+
+      newErrors.name =
+        "Only letters allowed";
+
     }
 
-    if (!phone.match(/^[0-9]{10}$/)) {
+    if (
+      !phone.match(
+        /^[0-9]{10}$/
+      )
+    ) {
+
       newErrors.phone =
         "Enter valid 10 digit phone";
+
     }
 
     if (!brand.trim()) {
-      newErrors.brand = "Brand required";
+
+      newErrors.brand =
+        "Brand required";
+
     }
 
     if (!model.trim()) {
-      newErrors.model = "Model required";
+
+      newErrors.model =
+        "Model required";
+
     }
 
     if (!year.trim()) {
-      newErrors.year = "Year required";
+
+      newErrors.year =
+        "Year required";
+
     }
 
     if (!km.trim()) {
-      newErrors.km = "KM required";
+
+      newErrors.km =
+        "KM required";
+
     }
 
     if (!price.trim()) {
+
       newErrors.price =
         "Expected price required";
+
     }
 
     if (!carNumber.trim()) {
+
       newErrors.carNumber =
         "Car number required";
+
     }
 
-    if (carImages.length === 0) {
+    if (
+      carImages.length === 0
+    ) {
+
       newErrors.images =
         "Upload car images";
+
     }
 
     if (!rcBook) {
-      newErrors.rc = "RC required";
+
+      newErrors.rc =
+        "RC required";
+
     }
 
     if (!license) {
+
       newErrors.license =
         "License required";
+
+    }
+
+    /* AUTO FOCUS */
+    if (newErrors.name) {
+
+      nameRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+
+      nameRef.current?.focus();
+
+    } else if (
+      newErrors.phone
+    ) {
+
+      phoneRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+
+      phoneRef.current?.focus();
+
+    } else if (
+      newErrors.brand
+    ) {
+
+      brandRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+
+      brandRef.current?.focus();
+
+    } else if (
+      newErrors.model
+    ) {
+
+      modelRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+
+      modelRef.current?.focus();
+
+    } else if (
+      newErrors.year
+    ) {
+
+      yearRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+
+      yearRef.current?.focus();
+
+    } else if (
+      newErrors.km
+    ) {
+
+      kmRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+
+      kmRef.current?.focus();
+
+    } else if (
+      newErrors.price
+    ) {
+
+      priceRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+
+      priceRef.current?.focus();
+
+    } else if (
+      newErrors.carNumber
+    ) {
+
+      carNumberRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+
+      carNumberRef.current?.focus();
+
     }
 
     setErrors(newErrors);
 
-    return Object.keys(newErrors).length === 0;
+    return (
+      Object.keys(newErrors)
+        .length === 0
+    );
 
   };
 
   /* SUBMIT */
-  const handleSubmit = async () => {
+  const handleSubmit =
+    async (e) => {
 
-    if (!validateForm()) {
-      return;
-    }
+      e.preventDefault();
 
-    try {
+      if (loading) return;
 
-      setLoading(true);
+      if (!validateForm()) {
 
-      const uploadedImages = await Promise.all(
+        return;
 
-        carImages.map((file) =>
-          uploadFileToCloudinary(file)
-        )
+      }
 
-      );
+      try {
 
-      const rcUrl =
-        await uploadFileToCloudinary(rcBook);
+        setLoading(true);
 
-      const licenseUrl =
-        await uploadFileToCloudinary(license);
+        /* CAR IMAGES */
+        const uploadedImages =
+          await Promise.all(
 
-      const message = `
+            carImages.map(
+              (file) =>
+                uploadFileToCloudinary(
+                  file
+                )
+            )
 
-🚗 SELL MY CAR REQUEST
+          );
 
-━━━━━━━━━━━━━━━
+        /* RC */
+        const rcUrl =
+          await uploadFileToCloudinary(
+            rcBook
+          );
 
-👤 Customer Name:
-${name}
+        /* DL */
+        const licenseUrl =
+          await uploadFileToCloudinary(
+            license
+          );
 
-📞 Phone:
-+91 ${phone}
+        await savePendingCar({
 
-🚘 Brand:
-${brand}
+          name,
+          phone,
+          brand,
+          model,
+          year,
+          km,
+          price,
+          carNumber,
 
-🚘 Model:
-${model}
+          images:
+            uploadedImages,
 
-🚘 Car Number:
-${carNumber}
+          rcUrl,
+          licenseUrl,
 
-📅 Year:
-${year}
+        });
 
-🛣 KM Driven:
-${km}
+        alert(
+          "Vehicle submitted successfully"
+        );
 
-💰 Expected Price:
-${price}
+        /* RESET */
+        setName("");
 
-━━━━━━━━━━━━━━━
+        setPhone("");
 
-📸 CAR IMAGES:
-${uploadedImages.join("\n")}
+        setBrand("");
 
-━━━━━━━━━━━━━━━
+        setModel("");
 
-📄 RC BOOK:
-${rcUrl}
+        setYear("");
 
-━━━━━━━━━━━━━━━
+        setKm("");
 
-🪪 DRIVING LICENSE:
-${licenseUrl}
+        setPrice("");
 
-`;
+        setCarNumber("");
 
-      window.open(
-        `https://wa.me/917093098989?text=${encodeURIComponent(message)}`,
-        "_blank"
-      );
+        setCarImages([]);
 
-      // Save car data to local storage
-      saveCar({
+        setPreviewImages([]);
 
-  id: Date.now(),
+        setRcBook(null);
 
-  name,
-  phone,
-  brand,
-  model,
-  year,
-  km,
-  price,
-  carNumber,
+        setLicense(null);
 
-  images: uploadedImages,
+        setErrors({});
 
-  rcUrl,
-  licenseUrl,
+        setLoading(false);
 
-});
+      } catch (error) {
 
-      setLoading(false);
+        console.log(error);
 
-    } catch (error) {
+        setLoading(false);
 
-      console.log(error);
+      }
 
-      alert("Upload Failed");
-
-      setLoading(false);
-
-    }
-
-  };
+    };
 
   return (
 
     <section
       id="sell-car"
       className="
-        relative
-        overflow-hidden
         py-24
         px-5
         md:px-10
       "
     >
 
-      {/* Ambient Glow */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-500/[0.05] blur-[180px] rounded-full"></div>
+      <div className="
+        max-w-7xl
+        mx-auto
+      ">
 
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/[0.04] blur-[160px] rounded-full"></div>
-
-      {/* Grid */}
-      <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:30px_30px]"></div>
-
-      <div className="relative z-10  max-w-[1400px] mx-auto">
-
-        {/* Heading */}
+        {/* TITLE */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          viewport={{ once: true }}
-          className="max-w-4xl mb-16"
+
+          initial={{
+            opacity: 0,
+            y: 40
+          }}
+
+          whileInView={{
+            opacity: 1,
+            y: 0
+          }}
+
+          transition={{
+            duration: 0.7
+          }}
+
+          viewport={{
+            once: true
+          }}
+
+          className="
+            mb-16
+          "
         >
 
-          <span className="
-            inline-flex
-            items-center
-            px-5
-            py-2
-            rounded-full
-            border
-            border-white/[0.08]
-            bg-white/[0.03]
-            backdrop-blur-xl
-            text-xs
-            tracking-[3px]
-            uppercase
-            text-gray-300
-            mb-6
-          ">
-            Sell Your Vehicle Through Moto Pep
-          </span>
-
           <h2 className="
-            text-4xl
+            text-5xl
             md:text-7xl
             font-black
-            leading-[0.9]
             uppercase
           ">
+
             Sell Your
-            <span className="block text-red-500">
+
+            <span className="
+              block
+              text-red-500
+            ">
+
               Car
+
             </span>
+
           </h2>
 
         </motion.div>
 
-        {/* Layout */}
+        {/* FORM */}
         <div className="
           grid
           lg:grid-cols-2
           gap-10
-          items-start
         ">
 
           {/* LEFT */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            viewport={{ once: true }}
-
-            className="
-              relative
-              overflow-hidden
-              rounded-[36px]
-              border
-              border-white/[0.06]
-              bg-white/[0.03]
-              backdrop-blur-3xl
-              p-9
-              md:p-8
-              shadow-[0_0_80px_rgba(255,0,0,0.08)]
-            "
-          >
+          <div className="
+            rounded-[36px]
+            border
+            border-white/[0.06]
+            bg-white/[0.03]
+            p-8
+          ">
 
             <div className="
-              absolute
-              top-0
-              right-0
-              w-[250px]
-              h-[250px]
-              bg-red-500/[0.06]
-              blur-[120px]
-              rounded-full
-            "></div>
-
-            <div className="relative z-10 mb-8">
-
-              <div className="
-                inline-flex
-                items-center
-                gap-2
-                px-4
-                py-2
-                rounded-full
-                border
-                border-red-500/20
-                bg-red-500/10
-                text-[10px]
-                tracking-[2px]
-                uppercase
-                text-red-300
-                mb-5
-              ">
-                Secure Vehicle Submission
-              </div>
-
-              <h3 className="
-                text-3xl
-                md:text-5xl
-                font-black
-                uppercase
-                leading-none
-              ">
-                Vehicle
-                <span className="block text-red-500">
-                  Information
-                </span>
-              </h3>
-
-            </div>
-
-            <div className="
-              relative
-              z-10
               grid
               md:grid-cols-2
               gap-5
             ">
 
-              {/* Name */}
-              <div className="md:col-span-2">
+              {/* NAME */}
+              <div className="
+                md:col-span-2
+              ">
 
                 <input
+                  ref={nameRef}
+
                   type="text"
+
                   placeholder="Customer Name"
+
                   value={name}
 
                   onChange={(e) =>
@@ -378,127 +507,152 @@ ${licenseUrl}
                     )
                   }
 
-                  className="
+                  className={`
                     w-full
                     h-[64px]
                     rounded-2xl
                     border
-                    border-white/[0.06]
+                    ${
+                      errors.name
+                        ? "border-red-500"
+                        : "border-white/[0.06]"
+                    }
                     bg-black/40
                     px-5
                     outline-none
-                    text-sm
-                    focus:border-red-500/40
-                    focus:shadow-[0_0_20px_rgba(255,0,0,0.15)]
-                  "
+                  `}
                 />
 
                 {
                   errors.name && (
-                    <p className="text-red-500 text-xs mt-2">
+
+                    <p className="
+                      text-red-500
+                      text-xs
+                      mt-2
+                    ">
+
                       {errors.name}
+
                     </p>
+
                   )
                 }
 
               </div>
 
-              {/* Phone */}
-              <div className="md:col-span-2">
+              {/* PHONE */}
+              <div className="
+                md:col-span-2
+              ">
 
-                <div className="
-                  flex
-                  items-center
-                  h-[64px]
-                  rounded-2xl
-                  border
-                  border-white/[0.06]
-                  bg-black/40
-                  overflow-hidden
-                ">
+                <input
+                  ref={phoneRef}
 
-                  <div className="
-                    px-5
-                    text-red-400
-                    font-medium
-                  ">
-                    +91
-                  </div>
+                  type="text"
 
-                  <input
-                    type="text"
-                    placeholder="Phone Number"
-                    value={phone}
+                  placeholder="Phone Number"
 
-                    onChange={(e) =>
-                      setPhone(
-                        e.target.value
-                          .replace(/\D/g, "")
-                          .slice(0, 10)
-                      )
+                  value={phone}
+
+                  onChange={(e) =>
+                    setPhone(
+                      e.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, 10)
+                    )
+                  }
+
+                  className={`
+                    w-full
+                    h-[64px]
+                    rounded-2xl
+                    border
+                    ${
+                      errors.phone
+                        ? "border-red-500"
+                        : "border-white/[0.06]"
                     }
-
-                    className="
-                      w-full
-                      h-full
-                      bg-transparent
-                      outline-none
-                      text-sm
-                    "
-                  />
-
-                </div>
+                    bg-black/40
+                    px-5
+                    outline-none
+                  `}
+                />
 
               </div>
 
-              {/* Brand */}
+              {/* BRAND */}
               <input
+                ref={brandRef}
+
                 type="text"
+
                 placeholder="Car Brand"
+
                 value={brand}
+
                 onChange={(e) =>
-                  setBrand(e.target.value)
+                  setBrand(
+                    e.target.value
+                  )
                 }
 
-                className="
+                className={`
                   w-full
                   h-[64px]
                   rounded-2xl
                   border
-                  border-white/[0.06]
+                  ${
+                    errors.brand
+                      ? "border-red-500"
+                      : "border-white/[0.06]"
+                  }
                   bg-black/40
                   px-5
                   outline-none
-                  text-sm
-                "
+                `}
               />
 
-              {/* Model */}
+              {/* MODEL */}
               <input
+                ref={modelRef}
+
                 type="text"
+
                 placeholder="Car Model"
+
                 value={model}
+
                 onChange={(e) =>
-                  setModel(e.target.value)
+                  setModel(
+                    e.target.value
+                  )
                 }
 
-                className="
+                className={`
                   w-full
                   h-[64px]
                   rounded-2xl
                   border
-                  border-white/[0.06]
+                  ${
+                    errors.model
+                      ? "border-red-500"
+                      : "border-white/[0.06]"
+                  }
                   bg-black/40
                   px-5
                   outline-none
-                  text-sm
-                "
+                `}
               />
 
-              {/* Year */}
+              {/* YEAR */}
               <input
+                ref={yearRef}
+
                 type="text"
+
                 placeholder="Year"
+
                 value={year}
 
                 onChange={(e) =>
@@ -509,23 +663,30 @@ ${licenseUrl}
                   )
                 }
 
-                className="
+                className={`
                   w-full
                   h-[64px]
                   rounded-2xl
                   border
-                  border-white/[0.06]
+                  ${
+                    errors.year
+                      ? "border-red-500"
+                      : "border-white/[0.06]"
+                  }
                   bg-black/40
                   px-5
                   outline-none
-                  text-sm
-                "
+                `}
               />
 
               {/* KM */}
               <input
+                ref={kmRef}
+
                 type="text"
+
                 placeholder="KM Driven"
+
                 value={km}
 
                 onChange={(e) =>
@@ -537,51 +698,65 @@ ${licenseUrl}
                   )
                 }
 
-                className="
+                className={`
                   w-full
                   h-[64px]
                   rounded-2xl
                   border
-                  border-white/[0.06]
+                  ${
+                    errors.km
+                      ? "border-red-500"
+                      : "border-white/[0.06]"
+                  }
                   bg-black/40
                   px-5
                   outline-none
-                  text-sm
-                "
+                `}
               />
 
-              {/* Price */}
+              {/* PRICE */}
               <input
+                ref={priceRef}
+
                 type="text"
+
                 placeholder="Expected Price"
+
                 value={price}
 
                 onChange={(e) =>
                   setPrice(
                     e.target.value.replace(
-                      /[^0-9,]/g,
+                      /\D/g,
                       ""
                     )
                   )
                 }
 
-                className="
+                className={`
                   w-full
                   h-[64px]
                   rounded-2xl
                   border
-                  border-white/[0.06]
+                  ${
+                    errors.price
+                      ? "border-red-500"
+                      : "border-white/[0.06]"
+                  }
                   bg-black/40
                   px-5
                   outline-none
-                  text-sm
-                "
+                `}
               />
 
-              {/* Car Number */}
+              {/* CAR NUMBER */}
               <input
+                ref={carNumberRef}
+
                 type="text"
+
                 placeholder="Car Number"
+
                 value={carNumber}
 
                 onChange={(e) =>
@@ -590,543 +765,321 @@ ${licenseUrl}
                   )
                 }
 
-                className="
+                className={`
                   w-full
                   h-[64px]
-                  uppercase
                   rounded-2xl
                   border
-                  border-white/[0.06]
+                  ${
+                    errors.carNumber
+                      ? "border-red-500"
+                      : "border-white/[0.06]"
+                  }
                   bg-black/40
                   px-5
                   outline-none
-                  text-sm
-                "
+                `}
               />
 
             </div>
 
-          </motion.div>
+          </div>
 
           {/* RIGHT */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            viewport={{ once: true }}
+          <div className="
+            rounded-[36px]
+            border
+            border-white/[0.06]
+            bg-white/[0.03]
+            p-8
+          ">
 
-            className="
-              relative
-              overflow-hidden
-              rounded-[36px]
+            {/* IMAGE UPLOAD */}
+            <label className="
+              flex
+              items-center
+              justify-center
+              h-[180px]
+              rounded-[32px]
+              border
+              border-dashed
+              border-white/[0.08]
+              cursor-pointer
+            ">
+
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageUpload}
+              />
+
+              <div className="text-center">
+
+                <div className="
+                  text-6xl
+                ">
+                  🚘
+                </div>
+
+                <p className="
+                  mt-3
+                  font-semibold
+                ">
+
+                  Upload Car Images
+
+                </p>
+
+              </div>
+
+            </label>
+
+            {
+              errors.images && (
+
+                <p className="
+                  text-red-500
+                  text-xs
+                  mt-2
+                ">
+
+                  {errors.images}
+
+                </p>
+
+              )
+            }
+
+            {/* PREVIEW */}
+            {
+              previewImages.length > 0 && (
+
+                <div className="
+                  grid
+                  grid-cols-3
+                  gap-3
+                  mt-5
+                ">
+
+                  {
+                    previewImages.map(
+                      (
+                        image,
+                        index
+                      ) => (
+
+                        <img
+                          key={index}
+                          src={image}
+                          alt=""
+
+                          className="
+                            h-28
+                            w-full
+                            object-cover
+                            rounded-2xl
+                          "
+                        />
+
+                      )
+                    )
+                  }
+
+                </div>
+
+              )
+            }
+
+            {/* RC */}
+            <label className="
+              flex
+              items-center
+              justify-between
+              mt-6
+              px-5
+              py-5
+              rounded-2xl
               border
               border-white/[0.06]
-              bg-white/[0.03]
-              backdrop-blur-3xl
-              p-9
-              md:p-8
-              shadow-[0_0_80px_rgba(255,0,0,0.08)]
-            "
-          >
+              bg-black/30
+              cursor-pointer
+            ">
 
-            <div className="
-              absolute
-              bottom-0
-              left-0
-              w-[220px]
-              h-[220px]
-              bg-blue-500/[0.05]
-              blur-[120px]
-              rounded-full
-            "></div>
+              <input
+                type="file"
+                accept=".pdf,image/*"
+                className="hidden"
 
-            <div className="relative z-10">
+                onChange={(e) =>
+                  setRcBook(
+                    e.target.files[0]
+                  )
+                }
+              />
 
-              {/* Header */}
-              <div className="mb-8">
+              <div>
 
-                <div className="
-                  inline-flex
-                  items-center
-                  gap-2
-                  px-4
-                  py-2
-                  rounded-full
-                  border
-                  border-blue-500/20
-                  bg-blue-500/10
-                  text-[10px]
-                  tracking-[2px]
-                  uppercase
-                  text-blue-300
-                  mb-5
+                <p className="
+                  font-semibold
                 ">
-                  Upload Documents
-                </div>
 
-                <h3 className="
-                  text-3xl
-                  md:text-5xl
-                  font-black
-                  uppercase
-                  leading-none
-                ">
-                  Vehicle Media
-                </h3>
+                  Upload RC
+
+                </p>
+
+                {
+                  rcBook && (
+
+                    <p className="
+                      text-green-400
+                      text-xs
+                      mt-2
+                    ">
+
+                      ✓ {rcBook.name}
+
+                    </p>
+
+                  )
+                }
 
               </div>
 
-              {/* Upload */}
-              <label className="
-                relative
-                flex
-                flex-col
-                items-center
-                justify-center
-                w-full
-                h-[190px]
-                rounded-[32px]
-                border
-                border-dashed
-                border-white/[0.08]
-                bg-gradient-to-br
-                from-white/[0.03]
-                to-transparent
-                cursor-pointer
-                overflow-hidden
-                group
+              <div className="
+                text-3xl
               ">
+                📄
+              </div>
 
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleImageUpload}
-                />
+            </label>
 
-                <div className="
-                  absolute
-                  inset-0
-                  opacity-0
-                  group-hover:opacity-100
-                  bg-red-500/[0.04]
-                  transition-all
-                  duration-500
-                "></div>
+            {
+              errors.rc && (
 
-                <div className="relative z-10 text-center">
+                <p className="
+                  text-red-500
+                  text-xs
+                  mt-2
+                ">
 
-                  <div className="text-6xl mb-3">
-                    🚘
-                  </div>
+                  {errors.rc}
 
-                  <p className="
-                    text-xl
-                    font-bold
-                    mb-2
-                  ">
-                    Upload Car Photos
-                  </p>
+                </p>
 
-                  <span className="
-                    text-gray-500
-                    text-sm
-                  ">
-                    Front • Rear • Interior • Dashboard
-                  </span>
+              )
+            }
 
-                </div>
+            {/* DL */}
+            <label className="
+              flex
+              items-center
+              justify-between
+              mt-5
+              px-5
+              py-5
+              rounded-2xl
+              border
+              border-white/[0.06]
+              bg-black/30
+              cursor-pointer
+            ">
 
-              </label>
+              <input
+                type="file"
+                accept=".pdf,image/*"
+                className="hidden"
 
-              {/* Image Preview */}
+                onChange={(e) =>
+                  setLicense(
+                    e.target.files[0]
+                  )
+                }
+              />
+
+              <div>
+
+                <p className="
+                  font-semibold
+                ">
+
+                  Upload Driving License
+
+                </p>
+
+                {
+                  license && (
+
+                    <p className="
+                      text-green-400
+                      text-xs
+                      mt-2
+                    ">
+
+                      ✓ {license.name}
+
+                    </p>
+
+                  )
+                }
+
+              </div>
+
+              <div className="
+                text-3xl
+              ">
+                🪪
+              </div>
+
+            </label>
+
+            {
+              errors.license && (
+
+                <p className="
+                  text-red-500
+                  text-xs
+                  mt-2
+                ">
+
+                  {errors.license}
+
+                </p>
+
+              )
+            }
+
+            {/* BUTTON */}
+            <button
+              onClick={handleSubmit}
+
+              disabled={loading}
+
+              className="
+                w-full
+                h-[64px]
+                rounded-2xl
+                bg-red-600
+                hover:bg-red-700
+                transition-all
+                duration-300
+                mt-8
+                font-semibold
+                uppercase
+                tracking-[2px]
+              "
+            >
+
               {
-                previewImages.length > 0 && (
-
-                  <div className="
-                    grid
-                    grid-cols-3
-                    gap-3
-                    mt-5
-                  ">
-
-                    {
-                      previewImages.map(
-                        (image, index) => (
-
-                          <div
-                            key={index}
-                            className="
-                              relative
-                              rounded-2xl
-                              overflow-hidden
-                              group
-                            "
-                          >
-
-                            <img
-                              src={image}
-                              alt=""
-                              className="
-                                w-full
-                                h-28
-                                object-cover
-                                group-hover:scale-110
-                                transition-all
-                                duration-500
-                              "
-                            />
-
-                            <button
-                              type="button"
-
-                              onClick={() => {
-
-                                const updatedImages =
-                                  [...carImages];
-
-                                updatedImages.splice(index, 1);
-
-                                setCarImages(updatedImages);
-
-                                const updatedPreviews =
-                                  [...previewImages];
-
-                                updatedPreviews.splice(index, 1);
-
-                                setPreviewImages(
-                                  updatedPreviews
-                                );
-
-                              }}
-
-                              className="
-                                absolute
-                                top-2
-                                right-2
-                                w-7
-                                h-7
-                                rounded-full
-                                bg-red-600
-                                text-white
-                                text-xs
-                              "
-                            >
-                              ✕
-                            </button>
-
-                          </div>
-
-                        )
-                      )
-                    }
-
-                  </div>
-
-                )
+                loading
+                  ? "Uploading..."
+                  : "Submit Vehicle"
               }
 
-              {/* LIVE VEHICLE PREVIEW */}
-              <div className="
-                mt-6
-                rounded-[28px]
-                overflow-hidden
-                border
-                border-white/[0.06]
-                bg-gradient-to-br
-                from-white/[0.04]
-                to-transparent
-              ">
+            </button>
 
-                <div className="
-                  relative
-                  h-[220px]
-                  overflow-hidden
-                ">
-
-                  {
-                    previewImages.length > 0 ? (
-
-                      <img
-                        src={previewImages[0]}
-                        alt=""
-                        className="
-                          w-full
-                          h-full
-                          object-cover
-                        "
-                      />
-
-                    ) : (
-
-                      <div className="
-                        w-full
-                        h-full
-                        flex
-                        items-center
-                        justify-center
-                        bg-black/40
-                        text-7xl
-                      ">
-                        🚘
-                      </div>
-
-                    )
-                  }
-
-                  <div className="
-                    absolute
-                    inset-0
-                    bg-gradient-to-t
-                    from-black
-                    via-black/20
-                    to-transparent
-                  "></div>
-
-                  <div className="
-                    absolute
-                    top-4
-                    right-4
-                    px-4
-                    py-2
-                    rounded-full
-                    bg-red-600
-                    text-xs
-                    font-semibold
-                    tracking-[1px]
-                  ">
-
-                    ₹ {price || "0"}
-
-                  </div>
-
-                </div>
-
-                <div className="p-6">
-
-                  <h3 className="
-                    text-2xl
-                    font-black
-                    uppercase
-                    leading-tight
-                  ">
-
-                    {brand || "Brand"} {" "}
-                    {model || "Model"}
-
-                  </h3>
-
-                  <div className="
-                    flex
-                    flex-wrap
-                    gap-3
-                    mt-5
-                  ">
-
-                    <div className="
-                      px-4
-                      py-2
-                      rounded-full
-                      border
-                      border-white/[0.06]
-                      bg-white/[0.04]
-                      text-xs
-                    ">
-                      📅 {year || "Year"}
-                    </div>
-
-                    <div className="
-                      px-4
-                      py-2
-                      rounded-full
-                      border
-                      border-white/[0.06]
-                      bg-white/[0.04]
-                      text-xs
-                    ">
-                      🛣 {km || "0"} KM
-                    </div>
-
-                    <div className="
-                      px-4
-                      py-2
-                      rounded-full
-                      border
-                      border-white/[0.06]
-                      bg-white/[0.04]
-                      text-xs
-                    ">
-                      🚘 {carNumber || "CAR NUMBER"}
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-              {/* RC */}
-              <label className="
-                flex
-                items-center
-                justify-between
-                mt-6
-                px-5
-                py-5
-                rounded-2xl
-                border
-                border-white/[0.06]
-                bg-black/30
-                cursor-pointer
-              ">
-
-                <input
-                  type="file"
-                  accept=".pdf,image/*"
-                  className="hidden"
-
-                  onChange={(e) =>
-                    setRcBook(
-                      e.target.files[0]
-                    )
-                  }
-                />
-
-                <div>
-
-                  <p className="font-semibold">
-                    Registration Certificate
-                  </p>
-
-                  {
-                    rcBook && (
-                      <p className="
-                        text-green-400
-                        text-xs
-                        mt-2
-                      ">
-                        ✓ {rcBook.name}
-                      </p>
-                    )
-                  }
-
-                </div>
-
-                <div className="text-3xl">
-                  📄
-                </div>
-
-              </label>
-
-              {/* DL */}
-              <label className="
-                flex
-                items-center
-                justify-between
-                mt-5
-                px-5
-                py-5
-                rounded-2xl
-                border
-                border-white/[0.06]
-                bg-black/30
-                cursor-pointer
-              ">
-
-                <input
-                  type="file"
-                  accept=".pdf,image/*"
-                  className="hidden"
-
-                  onChange={(e) =>
-                    setLicense(
-                      e.target.files[0]
-                    )
-                  }
-                />
-
-                <div>
-
-                  <p className="font-semibold">
-                    Driving License
-                  </p>
-
-                  {
-                    license && (
-                      <p className="
-                        text-green-400
-                        text-xs
-                        mt-2
-                      ">
-                        ✓ {license.name}
-                      </p>
-                    )
-                  }
-
-                </div>
-
-                <div className="text-3xl">
-                  🪪
-                </div>
-
-              </label>
-
-              {/* Button */}
-              <button
-                onClick={handleSubmit}
-                disabled={loading}
-
-                className="
-                  relative
-                  overflow-hidden
-                  w-full
-                  h-[64px]
-                  rounded-2xl
-                  mt-8
-                  bg-gradient-to-r
-                  from-red-600
-                  to-red-700
-                  font-semibold
-                  uppercase
-                  tracking-[2px]
-                  shadow-[0_20px_60px_rgba(255,0,0,0.3)]
-                  hover:scale-[1.01]
-                  transition-all
-                  duration-300
-                "
-              >
-
-                <div className="
-                  absolute
-                  top-0
-                  left-[-100%]
-                  w-full
-                  h-full
-                  bg-gradient-to-r
-                  from-transparent
-                  via-white/10
-                  to-transparent
-                  hover:left-[100%]
-                  transition-all
-                  duration-1000
-                "></div>
-
-                <span className="relative z-10">
-
-                  {
-                    loading
-                      ? "Uploading Files..."
-                      : "Submit Vehicle Details"
-                  }
-
-                </span>
-
-              </button>
-
-            </div>
-
-          </motion.div>
+          </div>
 
         </div>
 
@@ -1135,6 +1088,7 @@ ${licenseUrl}
     </section>
 
   );
+
 }
 
 export default SellYourCar;

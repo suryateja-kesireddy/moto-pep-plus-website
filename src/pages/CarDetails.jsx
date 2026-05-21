@@ -1,24 +1,79 @@
-import { useState } from "react";
+import {
+  useState,
+  useEffect
+} from "react";
 
-import { useParams } from "react-router-dom";
+import {
+  useParams,
+  Link
+} from "react-router-dom";
 
 import { motion } from "framer-motion";
 
-import { getCars } from "../data/carStorage";
+import {
+  collection,
+  getDocs,
+} from "firebase/firestore";
+
+import { db } from "../utils/firebase";
 
 function CarDetails() {
 
   const { id } = useParams();
 
-  const cars = getCars();
+  const [car, setCar] =
+    useState(null);
+  const [activeImage, setActiveImage] =
+    useState("");
 
-  const car = cars.find(
-    (item) => item.id.toString() === id
-  );
 
-  const [activeImage, setActiveImage] = useState(
-    car?.images?.[0]
-  );
+  useEffect(() => {
+
+    const fetchCar = async () => {
+
+      try {
+
+        const snapshot =
+          await getDocs(
+            collection(
+              db,
+              "approvedCars"
+            )
+          );
+
+        const cars =
+          snapshot.docs.map(
+            (doc) => ({
+
+              id: doc.id,
+              ...doc.data(),
+
+            })
+          );
+
+        const foundCar =
+          cars.find(
+            (item) =>
+              item.id === id
+          );
+
+        setCar(foundCar);
+
+        setActiveImage(
+          foundCar?.images?.[0]
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+      }
+
+    };
+
+    fetchCar();
+
+  }, [id]);
 
   if (!car) {
 
@@ -125,10 +180,9 @@ function CarDetails() {
                     transition-all
                     duration-300
 
-                    ${
-                      activeImage === img
-                        ? "border-red-500"
-                        : "border-white/[0.06]"
+                    ${activeImage === img
+                      ? "border-red-500"
+                      : "border-white/[0.06]"
                     }
                   `}
                 >
@@ -154,6 +208,29 @@ function CarDetails() {
 
         {/* RIGHT */}
         <div>
+          <Link
+            to="/#cars"
+
+            className="
+    inline-flex
+    items-center
+    gap-2
+    px-5
+    py-3
+    rounded-2xl
+    border
+    border-white/[0.08]
+    bg-white/[0.03]
+    hover:bg-red-600
+    transition-all
+    duration-300
+    mb-6
+  "
+          >
+
+            ← Back
+
+          </Link>
 
           {/* Badge */}
           <div className="

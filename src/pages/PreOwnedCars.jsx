@@ -1,79 +1,51 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
-import { getCars } from "../data/carStorage";
+import {
+  subscribeApprovedCars
+} from "../data/firebaseCars";
 
 function PreOwnedCars() {
 
   const [cars, setCars] = useState([]);
 
-  const [search, setSearch] = useState("");
-
-  const [brandFilter, setBrandFilter] = useState("All");
-
+  /* REALTIME APPROVED CARS */
   useEffect(() => {
 
-    const allCars = getCars();
+    const unsubscribe =
+      subscribeApprovedCars(
+        (cars) => {
 
-    setCars(allCars);
+          setCars(
+
+            cars.filter(
+              (car) => car.sold !== true
+            )
+
+          );
+
+        }
+      );
+
+    return () => unsubscribe();
 
   }, []);
 
-  /* BRANDS */
-  const brands = useMemo(() => {
-
-    const uniqueBrands = [
-      ...new Set(
-        cars.map((car) => car.brand)
-      ),
-    ];
-
-    return ["All", ...uniqueBrands];
-
-  }, [cars]);
-
-  /* FILTERED CARS */
-  const filteredCars = useMemo(() => {
-
-    return cars.filter((car) => {
-
-      const matchesSearch =
-        car.brand
-          .toLowerCase()
-          .includes(search.toLowerCase()) ||
-
-        car.model
-          .toLowerCase()
-          .includes(search.toLowerCase());
-
-      const matchesBrand =
-        brandFilter === "All" ||
-        car.brand === brandFilter;
-
-      return (
-        matchesSearch &&
-        matchesBrand
-      );
-
-    });
-
-  }, [cars, search, brandFilter]);
-
   return (
 
-    <section
-      id="cars"
-
+    <section id="cars"
       className="
-        relative
-        overflow-hidden
-        min-h-screen
-        bg-black
-        py-28
-        px-5
-      "
-    >
+    
+      min-h-screen
+      bg-black
+      text-white
+      px-6
+      py-24
+      relative
+      overflow-hidden
+      
+    ">
 
       {/* Glow */}
       <div className="
@@ -88,146 +60,66 @@ function PreOwnedCars() {
       "></div>
 
       <div className="
-        max-w-7xl
-        mx-auto
         relative
         z-10
+        max-w-7xl
+        mx-auto
       ">
 
         {/* HEADER */}
-        <div className="
-          flex
-          flex-col
-          lg:flex-row
-          lg:items-end
-          lg:justify-between
-          gap-10
-          mb-16
-        ">
+        <div className="mb-16">
 
-          <div>
-
-            <span className="
-              inline-flex
-              items-center
-              px-5
-              py-2
-              rounded-full
-              border
-              border-red-500/20
-              bg-red-500/10
-              text-xs
-              tracking-[3px]
-              uppercase
-              text-red-300
-            ">
-              Premium Collection
-            </span>
-
-            <h2 className="
-              text-5xl
-              md:text-7xl
-              font-black
-              mt-6
-              leading-none
-              uppercase
-            ">
-
-              PRE-OWNED
-
-              <span className="block text-red-500">
-                CARS
-              </span>
-
-            </h2>
-
-          </div>
-
-          {/* SEARCH + FILTER */}
-          <div className="
-            flex
-            flex-col
-            md:flex-row
-            gap-4
-            w-full
-            lg:w-auto
+          <span className="
+            inline-flex
+            items-center
+            px-5
+            py-2
+            rounded-full
+            border
+            border-red-500/20
+            bg-red-500/10
+            text-xs
+            tracking-[3px]
+            uppercase
+            text-red-300
+            mb-6
           ">
 
-            {/* SEARCH */}
-            <input
-              type="text"
+            Live Marketplace
 
-              placeholder="Search Cars..."
+          </span>
 
-              value={search}
+          <h1 className="
+            text-5xl
+            md:text-7xl
+            font-black
+            uppercase
+            leading-none
+          ">
 
-              onChange={(e) =>
-                setSearch(e.target.value)
-              }
+            Pre-Owned
 
-              className="
-                h-[58px]
-                px-6
-                rounded-2xl
-                border
-                border-white/[0.06]
-                bg-white/[0.03]
-                backdrop-blur-xl
-                outline-none
-                min-w-[260px]
-              "
-            />
+            <span className="
+              block
+              text-red-500
+            ">
+              Cars
+            </span>
 
-            {/* FILTER */}
-            <select
-              value={brandFilter}
-
-              onChange={(e) =>
-                setBrandFilter(e.target.value)
-              }
-
-              className="
-                h-[58px]
-                px-6
-                rounded-2xl
-                border
-                border-white/[0.06]
-                bg-white/[0.03]
-                backdrop-blur-xl
-                outline-none
-              "
-            >
-
-              {
-                brands.map((brand) => (
-
-                  <option
-                    key={brand}
-                    value={brand}
-                    className="bg-black"
-                  >
-                    {brand}
-                  </option>
-
-                ))
-              }
-
-            </select>
-
-          </div>
+          </h1>
 
         </div>
 
-        {/* NO CARS */}
+        {/* EMPTY */}
         {
-          filteredCars.length === 0 ? (
+          cars.length === 0 && (
 
             <div className="
-              h-[420px]
-              rounded-[36px]
+              h-[400px]
+              rounded-[40px]
               border
               border-white/[0.06]
-              bg-white/[0.02]
+              bg-white/[0.03]
               flex
               flex-col
               items-center
@@ -239,192 +131,196 @@ function PreOwnedCars() {
                 🚘
               </div>
 
-              <h3 className="
-                text-3xl
-                font-bold
+              <h2 className="
+                text-4xl
+                font-black
                 mt-6
               ">
-                No Cars Found
-              </h3>
+                No Approved Cars Yet
+              </h2>
 
               <p className="
                 text-gray-500
                 mt-3
               ">
-                Try another search or upload a new car
+                Approved listings will appear here
               </p>
-
-            </div>
-
-          ) : (
-
-            <div className="
-              grid
-              md:grid-cols-2
-              xl:grid-cols-3
-              gap-8
-            ">
-
-              {
-                filteredCars.map((car) => (
-
-                  <Link
-                    key={car.id}
-
-                    to={`/car/${car.id}`}
-
-                    className="
-                      relative
-                      rounded-[32px]
-                      overflow-hidden
-                      border
-                      border-white/[0.06]
-                      bg-white/[0.03]
-                      backdrop-blur-2xl
-                      group
-                      transition-all
-                      duration-500
-                      hover:-translate-y-2
-                      hover:border-red-500/20
-                      hover:shadow-[0_20px_80px_rgba(255,0,0,0.12)]
-                    "
-                  >
-
-                    {/* IMAGE */}
-                    <div className="
-                      relative
-                      h-[260px]
-                      overflow-hidden
-                    ">
-
-                      <img
-                        src={car.images?.[0]}
-                        alt=""
-
-                        className="
-                          w-full
-                          h-full
-                          object-cover
-                          group-hover:scale-110
-                          transition-all
-                          duration-700
-                        "
-                      />
-
-                      {/* OVERLAY */}
-                      <div className="
-                        absolute
-                        inset-0
-                        bg-gradient-to-t
-                        from-black
-                        via-black/20
-                        to-transparent
-                      "></div>
-
-                      {/* PRICE */}
-                      <div className="
-                        absolute
-                        top-4
-                        right-4
-                        px-4
-                        py-2
-                        rounded-full
-                        bg-red-600
-                        text-sm
-                        font-bold
-                      ">
-                        ₹ {car.price}
-                      </div>
-
-                    </div>
-
-                    {/* CONTENT */}
-                    <div className="p-6">
-
-                      <h3 className="
-                        text-2xl
-                        font-black
-                        uppercase
-                      ">
-
-                        {car.brand}
-
-                        <span className="
-                          block
-                          text-red-500
-                          mt-1
-                        ">
-                          {car.model}
-                        </span>
-
-                      </h3>
-
-                      {/* SPECS */}
-                      <div className="
-                        flex
-                        flex-wrap
-                        gap-3
-                        mt-5
-                      ">
-
-                        <div className="
-                          px-4
-                          py-2
-                          rounded-full
-                          bg-white/[0.04]
-                          border
-                          border-white/[0.05]
-                          text-xs
-                        ">
-                          📅 {car.year}
-                        </div>
-
-                        <div className="
-                          px-4
-                          py-2
-                          rounded-full
-                          bg-white/[0.04]
-                          border
-                          border-white/[0.05]
-                          text-xs
-                        ">
-                          🛣 {car.km} KM
-                        </div>
-
-                      </div>
-
-                      {/* BUTTON */}
-                      <div className="
-                        mt-6
-                        h-[54px]
-                        rounded-2xl
-                        border
-                        border-red-500/20
-                        bg-red-500/10
-                        hover:bg-red-600
-                        transition-all
-                        duration-300
-                        flex
-                        items-center
-                        justify-center
-                        font-semibold
-                        tracking-[2px]
-                        uppercase
-                      ">
-                        View Details
-                      </div>
-
-                    </div>
-
-                  </Link>
-
-                ))
-              }
 
             </div>
 
           )
         }
+
+        {/* GRID */}
+        <div className="
+          grid
+          md:grid-cols-2
+          xl:grid-cols-3
+          gap-8
+        ">
+
+          {
+            cars.map((car) => (
+
+              <Link
+                key={car.id}
+
+                to={`/car/${car.id}`}
+
+                className="
+                  group
+                  rounded-[32px]
+                  overflow-hidden
+                  border
+                  border-white/[0.06]
+                  bg-white/[0.03]
+                  backdrop-blur-2xl
+                  hover:border-red-500/20
+                  hover:-translate-y-2
+                  transition-all
+                  duration-500
+                "
+              >
+
+                {/* IMAGE */}
+                <div className="
+                  relative
+                  h-[260px]
+                  overflow-hidden
+                ">
+
+                  <img
+                    src={car.images?.[0]}
+                    alt=""
+
+                    className="
+                      w-full
+                      h-full
+                      object-cover
+                      group-hover:scale-110
+                      transition-all
+                      duration-700
+                    "
+                  />
+
+                  {/* Overlay */}
+                  <div className="
+                    absolute
+                    inset-0
+                    bg-gradient-to-t
+                    from-black
+                    via-black/10
+                    to-transparent
+                  "></div>
+
+                  {/* PRICE */}
+                  <div className="
+                    absolute
+                    top-4
+                    right-4
+                    px-4
+                    py-2
+                    rounded-full
+                    bg-red-600
+                    text-sm
+                    font-bold
+                  ">
+
+                    ₹ {car.price}
+
+                  </div>
+
+                </div>
+
+                {/* CONTENT */}
+                <div className="p-6">
+
+                  <h2 className="
+                    text-3xl
+                    font-black
+                    uppercase
+                    leading-none
+                  ">
+
+                    {car.brand}
+
+                    <span className="
+                      block
+                      text-red-500
+                      mt-2
+                    ">
+                      {car.model}
+                    </span>
+
+                  </h2>
+
+                  {/* SPECS */}
+                  <div className="
+                    flex
+                    flex-wrap
+                    gap-3
+                    mt-6
+                  ">
+
+                    <div className="
+                      px-4
+                      py-2
+                      rounded-full
+                      border
+                      border-white/[0.06]
+                      bg-white/[0.04]
+                      text-xs
+                    ">
+
+                      📅 {car.year}
+
+                    </div>
+
+                    <div className="
+                      px-4
+                      py-2
+                      rounded-full
+                      border
+                      border-white/[0.06]
+                      bg-white/[0.04]
+                      text-xs
+                    ">
+
+                      🛣 {car.km} KM
+
+                    </div>
+
+                  </div>
+
+                  {/* BUTTON */}
+                  <div className="
+                    mt-8
+                    h-[54px]
+                    rounded-2xl
+                    bg-red-600
+                    hover:bg-red-700
+                    transition-all
+                    duration-300
+                    flex
+                    items-center
+                    justify-center
+                    font-semibold
+                    uppercase
+                    tracking-[2px]
+                  ">
+
+                    View Details
+
+                  </div>
+
+                </div>
+
+              </Link>
+
+            ))
+          }
+
+        </div>
 
       </div>
 

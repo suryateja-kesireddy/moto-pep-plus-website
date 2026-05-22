@@ -243,8 +243,7 @@ function Contact() {
             {/* Map */}
             <div className="overflow-hidden rounded-2xl border border-white/[0.05]">
 
-              <iframe
-                src="https://www.google.com/maps?q=Hislop+Road+Yapral+Hyderabad&output=embed"
+              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3805.1272645617287!2d78.5387362!3d17.5014373!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb9bf18cc6167d%3A0x92fd37f6ee556e5!2sMOTO%20PEP%20PLUS%20YAPRAL%20CAR%20ACCESSORIES!5e0!3m2!1sen!2sin!4v1779459991402!5m2!1sen!2sin" 
                 width="100%"
                 height="220"
                 loading="lazy"

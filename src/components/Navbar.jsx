@@ -258,7 +258,7 @@ function Navbar() {
         ? "gap-9"
         : i18n.language === "hi"
         ? "gap-15"
-        : "gap-5"
+        : "gap-4"
     }
   `}
 >

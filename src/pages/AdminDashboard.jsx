@@ -18,7 +18,6 @@ import {
 
 import {
   auth,
-  adminLogout,
 } from "../utils/auth";
 
 function AdminDashboard() {
@@ -31,69 +30,66 @@ function AdminDashboard() {
   const [pendingCount, setPendingCount] =
     useState(0);
 
-  /* FETCH DASHBOARD */
- /* REALTIME DASHBOARD */
-useEffect(() => {
+  /* REALTIME DASHBOARD */
+  useEffect(() => {
 
-  /* PENDING REALTIME */
-  const unsubscribePending =
-    onSnapshot(
+    const unsubscribePending =
+      onSnapshot(
 
-      collection(
-        db,
-        "pendingCars"
-      ),
+        collection(
+          db,
+          "pendingCars"
+        ),
 
-      (snapshot) => {
+        (snapshot) => {
 
-        const pendingCars =
-          snapshot.docs.map(
-            (doc) => ({
+          const pendingCars =
+            snapshot.docs.map(
+              (doc) => ({
 
-              firebaseId: doc.id,
-              ...doc.data(),
+                firebaseId: doc.id,
+                ...doc.data(),
 
-            })
+              })
+            );
+
+          setCars(pendingCars);
+
+          setPendingCount(
+            pendingCars.length
           );
 
-        setCars(pendingCars);
+        }
 
-        setPendingCount(
-          pendingCars.length
-        );
+      );
 
-      }
+    const unsubscribeApproved =
+      onSnapshot(
 
-    );
+        collection(
+          db,
+          "approvedCars"
+        ),
 
-  /* APPROVED REALTIME */
-  const unsubscribeApproved =
-    onSnapshot(
+        (snapshot) => {
 
-      collection(
-        db,
-        "approvedCars"
-      ),
+          setApprovedCount(
+            snapshot.size
+          );
 
-      (snapshot) => {
+        }
 
-        setApprovedCount(
-          snapshot.size
-        );
+      );
 
-      }
+    return () => {
 
-    );
+      unsubscribePending();
 
-  return () => {
+      unsubscribeApproved();
 
-    unsubscribePending();
+    };
 
-    unsubscribeApproved();
-
-  };
-
-}, []);
+  }, []);
 
   /* APPROVE */
   const approveCar = async (car) => {
@@ -119,8 +115,6 @@ useEffect(() => {
         )
       );
 
-
-
       alert(
         "Car Approved Successfully"
       );
@@ -142,7 +136,6 @@ useEffect(() => {
         doc(db, "pendingCars", id)
       );
 
-
       alert("Car Rejected");
 
     } catch (error) {
@@ -153,26 +146,6 @@ useEffect(() => {
 
   };
 
-  /* MARK SOLD */
-  const markSold = async (id) => {
-
-    try {
-
-      await markCarAsSold(id);
-
-      alert("Car Marked As Sold");
-
-
-
-    } catch (error) {
-
-      console.error(error);
-
-    }
-
-  };
-
-  /* AUTH CHECK */
   const user = auth.currentUser;
 
   if (!user) {
@@ -191,7 +164,8 @@ useEffect(() => {
       ">
 
         <h1 className="
-          text-5xl
+          text-4xl
+          md:text-5xl
           font-black
           uppercase
         ">
@@ -217,11 +191,12 @@ useEffect(() => {
       min-h-screen
       bg-black
       text-white
+      px-4
+      md:px-6
       py-24
-      px-5
+      overflow-x-hidden
     ">
 
-      {/* SIDEBAR */}
       <AdminSidebar />
 
       {/* Glow */}
@@ -229,123 +204,90 @@ useEffect(() => {
         fixed
         top-0
         right-0
-        w-[500px]
-        h-[500px]
+        w-[400px]
+        h-[400px]
         bg-red-500/[0.05]
-        blur-[180px]
+        blur-[150px]
         rounded-full
         pointer-events-none
       "></div>
 
       {/* CONTENT */}
       <div className="
-        max-w-7xl
-        ml-[320px]
+        lg:ml-[320px]
+        ml-0
         relative
         z-10
+        max-w-7xl
       ">
 
         {/* HEADER */}
         <div className="
-          flex
-          flex-col
-          lg:flex-row
-          lg:items-center
-          lg:justify-between
-          gap-10
-          mb-16
+          mb-12
+          pt-6
+          lg:pt-0
         ">
 
-          <div>
+          <span className="
+            px-4
+            py-2
+            rounded-full
+            bg-red-500/10
+            border
+            border-red-500/20
+            text-[10px]
+            md:text-xs
+            uppercase
+            tracking-[3px]
+            text-red-300
+          ">
+            Moto Pep Admin
+          </span>
+
+          <h1 className="
+            text-[46px]
+            sm:text-[60px]
+            md:text-[90px]
+            lg:text-[120px]
+            font-black
+            mt-5
+            uppercase
+            leading-[0.9]
+          ">
+
+            Pending
 
             <span className="
-              px-5
-              py-2
-              rounded-full
-              bg-red-500/10
-              border
-              border-red-500/20
-              text-xs
-              uppercase
-              tracking-[3px]
-              text-red-300
+              block
+              text-red-500
             ">
-              Moto Pep Admin
+              Car Approvals
             </span>
 
-            <h1 className="
-              text-5xl
-              md:text-6xl
-              font-black
-              mt-6
-              uppercase
-              leading-none
-            ">
-
-              Pending
-
-              <span className="
-                block
-                text-red-500
-              ">
-                Car Approvals
-              </span>
-
-            </h1>
-
-          </div>
-
-          {/* LOGOUT */}
-          <button
-
-            onClick={async () => {
-
-              await adminLogout();
-
-              window.location.href =
-                "/admin-login";
-
-            }}
-
-            className="
-              h-[58px]
-              px-8
-              rounded-2xl
-              bg-red-600
-              hover:bg-red-700
-              transition-all
-              duration-300
-              font-semibold
-              uppercase
-              tracking-[2px]
-            "
-          >
-
-            Logout
-
-          </button>
+          </h1>
 
         </div>
 
         {/* STATS */}
         <div className="
           grid
+          grid-cols-1
           md:grid-cols-2
-          gap-6
-          mb-14
+          gap-5
+          mb-10
         ">
 
           {/* Pending */}
           <div className="
-            rounded-[32px]
+            rounded-[28px]
             border
             border-yellow-500/20
             bg-yellow-500/10
-            p-8
+            p-6
           ">
 
             <p className="
-              text-sm
+              text-xs
               uppercase
               tracking-[3px]
               text-yellow-300
@@ -354,9 +296,10 @@ useEffect(() => {
             </p>
 
             <h2 className="
-              text-6xl
+              text-5xl
+              md:text-6xl
               font-black
-              mt-4
+              mt-3
             ">
               {pendingCount}
             </h2>
@@ -365,15 +308,15 @@ useEffect(() => {
 
           {/* Approved */}
           <div className="
-            rounded-[32px]
+            rounded-[28px]
             border
             border-green-500/20
             bg-green-500/10
-            p-8
+            p-6
           ">
 
             <p className="
-              text-sm
+              text-xs
               uppercase
               tracking-[3px]
               text-green-300
@@ -382,9 +325,10 @@ useEffect(() => {
             </p>
 
             <h2 className="
-              text-6xl
+              text-5xl
+              md:text-6xl
               font-black
-              mt-4
+              mt-3
             ">
               {approvedCount}
             </h2>
@@ -398,8 +342,8 @@ useEffect(() => {
           cars.length === 0 && (
 
             <div className="
-              h-[400px]
-              rounded-[36px]
+              h-[320px]
+              rounded-[30px]
               border
               border-white/[0.06]
               bg-white/[0.03]
@@ -410,14 +354,15 @@ useEffect(() => {
               text-center
             ">
 
-              <div className="text-7xl">
+              <div className="text-6xl">
                 🚘
               </div>
 
               <h2 className="
-                text-4xl
+                text-3xl
+                md:text-4xl
                 font-black
-                mt-6
+                mt-5
               ">
                 No Pending Cars
               </h2>
@@ -425,6 +370,7 @@ useEffect(() => {
               <p className="
                 text-gray-500
                 mt-3
+                text-sm
               ">
                 All vehicle requests are reviewed
               </p>
@@ -437,9 +383,10 @@ useEffect(() => {
         {/* CAR GRID */}
         <div className="
           grid
+          grid-cols-1
           md:grid-cols-2
           xl:grid-cols-3
-          gap-8
+          gap-6
         ">
 
           {
@@ -449,7 +396,7 @@ useEffect(() => {
                 key={car.firebaseId}
 
                 className="
-                  rounded-[32px]
+                  rounded-[30px]
                   overflow-hidden
                   border
                   border-white/[0.06]
@@ -460,7 +407,8 @@ useEffect(() => {
 
                 {/* IMAGE */}
                 <div className="
-                  h-[240px]
+                  h-[220px]
+                  md:h-[240px]
                   overflow-hidden
                 ">
 
@@ -478,10 +426,11 @@ useEffect(() => {
                 </div>
 
                 {/* CONTENT */}
-                <div className="p-6">
+                <div className="p-5">
 
                   <h2 className="
-                    text-3xl
+                    text-2xl
+                    md:text-3xl
                     font-black
                     uppercase
                     leading-none
@@ -501,8 +450,8 @@ useEffect(() => {
 
                   {/* DETAILS */}
                   <div className="
-                    mt-6
-                    space-y-3
+                    mt-5
+                    space-y-2
                     text-sm
                     text-gray-300
                   ">
@@ -526,13 +475,14 @@ useEffect(() => {
                     flex
                     flex-col
                     gap-3
-                    mt-8
+                    mt-7
                   ">
 
-                    {/* APPROVE + REJECT */}
                     <div className="
                       flex
-                      gap-4
+                      flex-col
+                      sm:flex-row
+                      gap-3
                     ">
 
                       <button
@@ -543,7 +493,7 @@ useEffect(() => {
 
                         className="
                           flex-1
-                          h-[54px]
+                          h-[52px]
                           rounded-2xl
                           bg-green-600
                           hover:bg-green-700
@@ -569,7 +519,7 @@ useEffect(() => {
 
                         className="
                           flex-1
-                          h-[54px]
+                          h-[52px]
                           rounded-2xl
                           bg-red-600
                           hover:bg-red-700
@@ -586,9 +536,6 @@ useEffect(() => {
                       </button>
 
                     </div>
-
-                    {/* SOLD */}
-                    
 
                   </div>
 
